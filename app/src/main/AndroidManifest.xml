@@ -16,6 +16,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".View.SplashActivity"
+            android:exported="false" />
+        <activity
             android:name=".View.ForgotPass"
             android:exported="false" />
         <activity
@@ -25,7 +28,6 @@
             android:name=".View.SignIn"
             android:exported="false" />
         <activity
-            android:name=".View.SplashActivity"
             android:name=".View.MovieDetail"
             android:exported="true">
             <intent-filter>
