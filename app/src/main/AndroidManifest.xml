@@ -26,6 +26,7 @@
             android:exported="false" />
         <activity
             android:name=".View.SplashActivity"
+            android:name=".View.MovieDetail"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
