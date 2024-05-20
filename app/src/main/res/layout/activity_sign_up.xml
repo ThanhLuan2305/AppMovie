@@ -39,13 +39,24 @@
         android:maxLength="100"/>
 
     <EditText
+        android:id="@+id/edt_name_up"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Tên"
+        android:imeOptions="actionNext"
+        android:textColor="@color/black"
+        android:inputType="textPersonName"
+        android:maxLength="100"
+        android:layout_marginTop="10dp"/>
+
+    <EditText
         android:id="@+id/edt_password_up"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Mật khẩu"
         android:inputType="textPassword"
         android:textColor="@color/black"
-        android:imeOptions="actionDone"
+        android:imeOptions="actionNext"
         android:maxLength="100"
         android:layout_marginTop="10dp"/>
     <EditText
