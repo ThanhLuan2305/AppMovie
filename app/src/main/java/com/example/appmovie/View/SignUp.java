@@ -4,8 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Patterns;
@@ -17,27 +15,23 @@ import android.widget.Toast;
 
 import com.example.appmovie.R;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SignUp extends AppCompatActivity {
 
     EditText edt_email, edt_password, edt_confirm_password, edt_name_up;
     Button btn_sign_up;
     ProgressBar progressBar;
-    private FirebaseAuth mAuth;
+    FirebaseAuth mAuth;
+    FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +39,7 @@ public class SignUp extends AppCompatActivity {
         setContentView(R.layout.activity_sign_up);
 
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
         addControl();
         addEvent();
     }
@@ -72,6 +67,7 @@ public class SignUp extends AppCompatActivity {
         String password = edt_password.getText().toString().trim();
         String confirmPassword = edt_confirm_password.getText().toString().trim();
         String name = edt_name_up.getText().toString().trim();
+        Uri imageUri = Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.logo_user);
 
         if (!isNotEmpty(emailInput) || !isNotEmpty(password) || !isNotEmpty(confirmPassword) || !isNotEmpty(name)) {
             Toast.makeText(this, "Vui lòng nhập đầy đủ các ô còn thiếu.", Toast.LENGTH_SHORT).show();
@@ -103,7 +99,7 @@ public class SignUp extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
                             if (user != null) {
-                                saveUserData(user, name);
+                                saveUserData(user, emailInput , name, String.valueOf(imageUri));
                             } else {
                                 Toast.makeText(SignUp.this, "Đăng ký thất bại. Vui lòng thử lại.", Toast.LENGTH_SHORT).show();
                             }
@@ -118,58 +114,28 @@ public class SignUp extends AppCompatActivity {
                 });
     }
 
-    private void saveUserData(FirebaseUser user, String name) {
-        String email = user.getEmail().replace(".", ",");
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(email);
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.logo_user);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] imageBytes = baos.toByteArray();
+    private void saveUserData(FirebaseUser user,String email, String name, String imageUrl) {
+        String uid = user.getUid();
 
-        FirebaseStorage storage = FirebaseStorage.getInstance();
-        StorageReference storageReference = storage.getReference();
-        StorageReference imageRef = storageReference.child("images/" + email + ".jpg");
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("Email", email);
+        userData.put("Name", name);
+        userData.put("Image", imageUrl);
 
-        UploadTask uploadTask = imageRef.putBytes(imageBytes);
-        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                if (task.isSuccessful()) {
-                    imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                        @Override
-                        public void onSuccess(Uri uri) {
-                            String imageUrl = uri.toString();
-                            databaseReference.child("Name").setValue(name);
-                            databaseReference.child("Image").setValue(imageUrl).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(SignUp.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(SignUp.this, SignIn.class);
-                                        startActivity(intent);
-                                        finish();
-                                    } else {
-                                        Toast.makeText(SignUp.this, "Đăng ký thất bại. Vui lòng thử lại.", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
+        db.collection("Users").document(uid).set(userData)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(SignUp.this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(SignUp.this, SignIn.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(SignUp.this, "Đăng ký thất bại. Vui lòng thử lại.", Toast.LENGTH_SHORT).show();
                         }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(SignUp.this, "Lỗi khi lấy URL hình ảnh: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } else {
-                    Toast.makeText(SignUp.this, "Lỗi khi tải hình ảnh lên: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(SignUp.this, "Lỗi khi tải hình ảnh lên: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                    }
+                });
     }
 
     private boolean isValidEmail(String email) {

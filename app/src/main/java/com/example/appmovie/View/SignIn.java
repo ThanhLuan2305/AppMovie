@@ -6,10 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,29 +20,24 @@ import com.example.appmovie.MainActivity;
 import com.example.appmovie.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SignIn extends AppCompatActivity {
 
@@ -52,9 +46,9 @@ public class SignIn extends AppCompatActivity {
     ProgressBar progressBar;
     TextView txt_forgot_password;
     GoogleSignInClient mGoogleSignInClient;
-    private ActivityResultLauncher<Intent> googleSignInLauncher;
-    private FirebaseAuth mAuth;
-    private DatabaseReference databaseReference;
+    FirebaseAuth mAuth;
+    FirebaseFirestore db;
+    ActivityResultLauncher<Intent> googleSignInLauncher;
 
     private static final int RC_SIGN_IN = 100;
 
@@ -64,7 +58,7 @@ public class SignIn extends AppCompatActivity {
         setContentView(R.layout.activity_sign_in);
 
         mAuth = FirebaseAuth.getInstance();
-        databaseReference = FirebaseDatabase.getInstance().getReference("Users");
+        db = FirebaseFirestore.getInstance();
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -79,6 +73,7 @@ public class SignIn extends AppCompatActivity {
                         handleSignInResult(data);
                     }
                 });
+
         addControl();
         addEvent();
     }
@@ -164,7 +159,7 @@ public class SignIn extends AppCompatActivity {
     }
 
     private boolean isValidEmail(String email) {
-        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+        return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     private void signInWithGoogle() {
@@ -172,22 +167,26 @@ public class SignIn extends AppCompatActivity {
         googleSignInLauncher.launch(signInIntent);
     }
 
-    private void handleSignInResult(Intent data) {
-        try {
-            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-            GoogleSignInAccount account = task.getResult(ApiException.class);
-            firebaseAuthWithGoogle(account.getIdToken());
-        } catch (ApiException e) {
-            Toast.makeText(this, "Google đăng nhập thất bại: " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == RC_SIGN_IN) {
+            try {
+                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account.getIdToken());
+            } catch (ApiException e) {
+                Toast.makeText(this, "Google đăng nhập thất bại: " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        mAuth.signInWithCredential(credential)
+        FirebaseAuth.getInstance().signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
-                        FirebaseUser user = mAuth.getCurrentUser();
+                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                         if (user != null) {
                             updateUI(user);
                         }
@@ -199,55 +198,39 @@ public class SignIn extends AppCompatActivity {
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
-            String email = user.getEmail().replace(".", ",");
+            String uid = user.getUid();
             String name = user.getDisplayName();
+            String email = user.getEmail();
+            String imageUrl = user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : Uri.parse("android.resource://" + getPackageName() + "/" + R.drawable.logo_user).toString();
 
-            databaseReference.child(email).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (!snapshot.exists()) {
-                        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.logo_user);
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                        byte[] imageBytes = baos.toByteArray();
+            Map<String, Object> userData = new HashMap<>();
+            userData.put("Name", name);
+            userData.put("Email", email);
+            userData.put("Image", imageUrl);
 
-                        FirebaseStorage storage = FirebaseStorage.getInstance();
-                        StorageReference storageReference = storage.getReference();
-                        StorageReference imageRef = storageReference.child("images/" + email + ".jpg");
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("Users").document(uid).set(userData)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(SignIn.this, "Đăng nhập thành công!", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(SignIn.this, MainActivity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(SignIn.this, "Đăng nhập thất bại. Vui lòng thử lại.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+    }
 
-                        UploadTask uploadTask = imageRef.putBytes(imageBytes);
-                        uploadTask.addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                        @Override
-                                        public void onSuccess(Uri uri) {
-                                            String imageUrl = uri.toString();
 
-                                            databaseReference.child(email).child("Name").setValue(name);
-                                            databaseReference.child(email).child("Image").setValue(imageUrl);
-
-                                            startActivity(new Intent(SignIn.this, MainActivity.class));
-                                            finish();
-                                        }
-                                    });
-                                } else {
-                                    Toast.makeText(SignIn.this, "Đăng nhập thất bại. Vui lòng thử lại.", Toast.LENGTH_SHORT).show();
-                                }
-                            }
-                        });
-                    } else {
-                        startActivity(new Intent(SignIn.this, MainActivity.class));
-                        finish();
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                    Toast.makeText(SignIn.this, "Đăng nhập thất bại. Vui lòng thử lại.", Toast.LENGTH_SHORT).show();
-                }
-            });
+    private void handleSignInResult(Intent data) {
+        try {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            GoogleSignInAccount account = task.getResult(ApiException.class);
+            firebaseAuthWithGoogle(account.getIdToken());
+        } catch (ApiException e) {
+            Toast.makeText(this, "Google đăng nhập thất bại: " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
         }
     }
 }
