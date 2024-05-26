@@ -55,6 +55,7 @@ public class MovieHome extends AppCompatActivity {
         sendReques();
         loadCateglory();
     }
+
     private void loadCateglory() {
         Category category1 = new Category("phim-bo", "Phim Bộ");
 

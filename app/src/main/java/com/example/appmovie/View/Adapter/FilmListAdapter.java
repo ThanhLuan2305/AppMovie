@@ -16,6 +16,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.appmovie.Model.Home.Item;
+import com.example.appmovie.Model.Home.ItemClickListener;
 import com.example.appmovie.R;
 import com.example.appmovie.View.MovieDetail;
 
