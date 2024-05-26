@@ -55,7 +55,16 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:backgroundTint="@android:color/holo_blue_dark"
-        android:text="Bấm để lấy lại mật khẩu tại Email" />
+        android:text="Bấm để lấy lại mật khẩu tại email" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:text="Liên hệ với email: nganhkiet159753@gmail.com sẽ được hỗ trợ chi tiết hơn"
+        android:textColor="#7E7878"
+        android:textSize="20sp" />
 
 </LinearLayout>
