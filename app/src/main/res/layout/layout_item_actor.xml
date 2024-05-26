@@ -24,7 +24,7 @@
         android:id="@+id/tvNameActor"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:textSize="18dp"
+        android:textSize="13dp"
         android:gravity="center"
         android:textColor="@color/white"
         android:layout_gravity="center"
