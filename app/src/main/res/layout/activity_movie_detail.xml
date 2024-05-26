@@ -15,7 +15,7 @@
         android:layout_height="280dp">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/thumbImg"
             android:layout_width="match_parent"
             android:src="@drawable/dal"
             android:layout_height="wrap_content"
@@ -35,6 +35,7 @@
 
 
             <TextView
+                android:id="@+id/tvInfoMovie"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
@@ -45,17 +46,6 @@
 
 
         </LinearLayout>
-<!--        <TextView-->
-<!--            android:layout_width="120dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:padding="25dp"-->
-<!--            android:gravity="center"-->
-<!--            android:layout_marginLeft="300dp"-->
-<!--            android:layout_gravity="bottom"-->
-<!--            android:background="@drawable/ic_label"-->
-<!--            android:backgroundTint="#85FF0707"-->
-<!--            android:text="completed"-->
-<!--            android:textColor="@color/white" />-->
     </com.google.android.material.card.MaterialCardView>
 
     <LinearLayout
@@ -144,12 +134,12 @@
 
                 <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="70dp">
+                    android:layout_height="match_parent">
 
                     <TextView
                         android:id="@+id/tvContent"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:textColor="@color/white"
                         android:text="Date A Live IV là phần anime thứ 4 chuyển thể từ light novel cùng tên do Koshi Tachibana sáng tác. Nhân vật chính của Date A Live là Shido, một chàng trai sở hữu khả năng đặc biệt có thể phong ấn các Tinh Linh - những cô gái có sức mạnh vô cùng khủng khiếp. Để kích hoạt phong ấn, Shido sẽ phải tiếp cận từng Tinh Linh và khiến họ yêu anh. Từ đây câu chuyện tán gái cứu thế giới hấp dẫn chính thức bắt đầu." />
 
@@ -185,13 +175,14 @@
                             android:text="Tình trạng: "/>
 
                         <Button
+                            android:id="@+id/btnEpisodeCurrent"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/black"
                             android:textSize="15dp"
                             android:textStyle="bold"
                             android:layout_gravity="center_vertical"
-                            android:text="tập 6"/>
+                            android:text="tập 16"/>
                     </LinearLayout>
                 </LinearLayout>
 
@@ -206,7 +197,7 @@
 
 
                     <ToggleButton
-                        android:id="@+id/btnFavorite1"
+                        android:id="@+id/btnFavorite"
                         android:layout_width="33dp"
                         android:layout_height="35dp"
                         android:background="@drawable/toggle_selector_favorite"
@@ -214,16 +205,14 @@
                         android:textOff=""
                         android:textOn="" />
 
-                    <ToggleButton
-                        android:id="@+id/btnShared1"
+                    <Button
+                        android:id="@+id/btnShared"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
                         android:layout_marginLeft="10dp"
-                        android:textOff=""
-                        android:textOn=""
                         android:backgroundTint="@color/white"
                         android:background="@drawable/ic_shared"
-                        android:text="Button" />
+                        android:clickable="true"/>
                 </LinearLayout>
             </LinearLayout>
 
@@ -301,7 +290,7 @@
                                 android:textStyle="bold" />
 
                             <TextView
-                                android:id="@+id/tvSubtitles"
+                                android:id="@+id/tvDirector"
                                 android:layout_width="90dp"
                                 android:layout_height="wrap_content"
                                 android:text="Đang cập nhật"

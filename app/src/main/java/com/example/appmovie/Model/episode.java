@@ -1,6 +1,8 @@
 package com.example.appmovie.Model;
 
-public class episode {
+import java.io.Serializable;
+
+public class episode implements Serializable {
     public String filename;
     public String link_embed;
     public String link_m3u8;
