@@ -17,11 +17,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class ForgotPass extends AppCompatActivity {
 
@@ -56,10 +51,6 @@ public class ForgotPass extends AppCompatActivity {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    private boolean isNotEmpty(String input) {
-        return input != null && !input.trim().isEmpty();
-    }
-
     void onClickForgotPassword() {
         String emailInput = edt_email_forgot.getText().toString().trim();
 
@@ -70,29 +61,11 @@ public class ForgotPass extends AppCompatActivity {
 
         progressBar.setVisibility(View.VISIBLE);
 
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Users").child(emailInput.replace(".", ","));
-        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    sendPasswordResetEmail(emailInput);
-                } else {
-                    progressBar.setVisibility(View.GONE);
-                    Toast.makeText(ForgotPass.this, "Không có người dùng nào với email này trong hệ thống.", Toast.LENGTH_LONG).show();
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                progressBar.setVisibility(View.GONE);
-                Toast.makeText(ForgotPass.this, "Lỗi khi kiểm tra tài khoản: " + error.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        });
+        sendPasswordResetEmail(emailInput);
     }
 
     void sendPasswordResetEmail(String email) {
         FirebaseAuth auth = FirebaseAuth.getInstance();
-        progressBar.setVisibility(View.VISIBLE);
         auth.sendPasswordResetEmail(email)
                 .addOnSuccessListener(aVoid -> {
                     progressBar.setVisibility(View.GONE);
@@ -108,5 +81,4 @@ public class ForgotPass extends AppCompatActivity {
                     }
                 });
     }
-
 }
