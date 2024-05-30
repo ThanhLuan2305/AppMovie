@@ -7,22 +7,51 @@
     android:orientation="vertical"
     tools:context=".MainActivity" >
 
-    <FrameLayout
-        android:id="@+id/frameFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <Button
-            android:id="@+id/btn_sign_out"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Đăng xuất"/>
+            <Button
+                android:id="@+id/btn_sign_out"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Đăng xuất"/>
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottom_nav"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            app:menu="@menu/menu_itme_home"
-            android:background="#0897B4"/>
-    </FrameLayout>
+    <Button
+        android:id="@+id/btnHome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Home" />
+
+    <Button
+        android:id="@+id/btnDetail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Detail" />
+
+    <Button
+        android:id="@+id/btnProfile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Profile" />
+
+    <Button
+        android:id="@+id/btnLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Login" />
+    <!--    <FrameLayout-->
+<!--        android:id="@+id/frameFragment"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent">-->
+<!--        <Button-->
+<!--            android:id="@+id/btn_sign_out"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Đăng xuất"/>-->
+
+<!--        <com.google.android.material.bottomnavigation.BottomNavigationView-->
+<!--            android:id="@+id/bottom_nav"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_gravity="bottom"-->
+<!--            app:menu="@menu/menu_itme_home"-->
+<!--            android:background="#0897B4"/>-->
+<!--    </FrameLayout>-->
 </LinearLayout>
