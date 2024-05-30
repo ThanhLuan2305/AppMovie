@@ -1,8 +1,9 @@
 package com.example.appmovie.Model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class episodes {
+public class episodes implements Serializable {
     public String server_name;
     public List<episode> server_data;
 

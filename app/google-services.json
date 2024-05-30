@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "241469577912",
+    "firebase_url": "https://movieonline-bda00-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "movieonline-bda00",
+    "storage_bucket": "movieonline-bda00.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:241469577912:android:a194450e49949ab991f24d",
+        "android_client_info": {
+          "package_name": "com.example.appmovie"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "241469577912-ssrjr0judukavkeffhkl4ui31dcb91ha.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyALiCYyNjkxtDcWoeLc3-EsCiQ3ZAobGuA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "241469577912-ssrjr0judukavkeffhkl4ui31dcb91ha.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
