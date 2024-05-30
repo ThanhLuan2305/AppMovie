@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         btnHome = findViewById(R.id.btnHome);
         btnDetail = findViewById(R.id.btnDetail);
         btnLogin = findViewById(R.id.btnLogin);
+        btnProfile = findViewById(R.id.btnProfile);
     }
     void event() {
         btn_sign_out.setOnClickListener(new View.OnClickListener() {
