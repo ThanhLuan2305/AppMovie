@@ -28,7 +28,6 @@ public class WatchMovie extends AppCompatActivity {
     }
     void initView(){
         playBtn = findViewById(R.id.playbtn);
-
         recyclerView = findViewById(R.id.episodeList);
         layoutManager = new GridLayoutManager(this,4);
         recyclerView.setLayoutManager(layoutManager);
