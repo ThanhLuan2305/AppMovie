@@ -8,6 +8,7 @@ import androidx.viewpager2.widget.CompositePageTransformer;
 import androidx.viewpager2.widget.MarginPageTransformer;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -36,7 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MovieHome extends AppCompatActivity {
-    private RecyclerView.Adapter adapterNewMovies, adapterCategory, adapterUpcomming;
+    private RecyclerView.Adapter adapterCategory;
+    private FilmListAdapter adapterNewMovies,adapterUpcomming;
     private RecyclerView recyclerViewNewMovies, recyclerViewUpcomming, recyclerViewCategory;
     private RequestQueue mRequestQueue;
     private StringRequest mStringRequest1, mStringRequest2, mStringRequest3;
@@ -119,6 +121,16 @@ public class MovieHome extends AppCompatActivity {
                 }
                 adapterNewMovies= new FilmListAdapter(lstItem);
                 recyclerViewNewMovies.setAdapter(adapterNewMovies);
+
+                adapterUpcomming.setOnItemClickListener(new FilmListAdapter.OnItemClickListener() {
+                    @Override
+                    public void onClick(int position, Item item) {
+                        item = lstItem.get(position);
+                        Intent it = new Intent(getApplicationContext(), TestOnClickFilm.class );
+                        it.putExtra("slug", item.getSlug());
+                        startActivity(it);
+                    }
+                });
 
                 adapterUpcomming= new FilmListAdapter(lstItem);
                 recyclerViewUpcomming.setAdapter(adapterUpcomming);
