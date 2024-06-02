@@ -2,23 +2,28 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/movie"
         android:icon="@drawable/baseline_movie_24"
         android:title="Phim lẻ" />
+
     <item
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/series"
         android:icon="@drawable/baseline_local_movies_24"
         android:title="Phim bộ" />
+
     <item
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/home"
         android:icon="@drawable/baseline_home_24"
         android:title="Trang chủ" />
+
     <item
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/cartoon"
         android:icon="@drawable/baseline_child_care_24"
         android:title="Hoạt hình" />
+
+    <item
+        android:id="@+id/menu_item_profile"
+        android:icon="@drawable/baseline_attribution_24"
+        android:title="Profile" />
+
 </menu>
