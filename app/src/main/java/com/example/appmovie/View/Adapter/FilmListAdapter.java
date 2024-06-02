@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -16,22 +17,21 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.appmovie.Model.Home.Item;
+import com.example.appmovie.Model.Home.ItemClickListener;
 import com.example.appmovie.R;
 import com.example.appmovie.View.MovieDetail;
+import com.example.appmovie.View.TestOnClickFilm;
 
 import java.util.List;
 
 public class FilmListAdapter extends RecyclerView.Adapter<FilmListAdapter.ViewHolder> {
     private List<Item> lstItem;
     private Context context;
-    private OnItemClickListener onClickListener;
+    private ItemClickListener itemClickListener;
 
-    public FilmListAdapter(List<Item> lstItem) {
+    public FilmListAdapter(List<Item> lstItem,ItemClickListener listener ) {
         this.lstItem = lstItem;
-    }
-
-    public void setOnItemClickListener(OnItemClickListener onClickListener) {
-        this.onClickListener = onClickListener;
+        this.itemClickListener = listener;
     }
 
     @NonNull
@@ -55,13 +55,10 @@ public class FilmListAdapter extends RecyclerView.Adapter<FilmListAdapter.ViewHo
                 .apply(requestOptions)
                 .into(holder.pic);
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.layoutItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int currentPosition = holder.getBindingAdapterPosition();
-                if (onClickListener != null && currentPosition != RecyclerView.NO_POSITION) {
-                    onClickListener.onClick(currentPosition, lstItem.get(currentPosition));
-                }
+                itemClickListener.onClickItemFilm(item);
             }
         });
     }
@@ -71,18 +68,15 @@ public class FilmListAdapter extends RecyclerView.Adapter<FilmListAdapter.ViewHo
         return lstItem.size();
     }
 
-    public interface OnItemClickListener {
-        void onClick(int position, Item item);
-    }
-
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView textTitle;
         ImageView pic;
-
+        ConstraintLayout layoutItem;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             textTitle = itemView.findViewById(R.id.titleText);
             pic = itemView.findViewById(R.id.imgMovieItem);
+            layoutItem = itemView.findViewById(R.id.layoutItem);
         }
     }
 }

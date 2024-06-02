@@ -56,12 +56,12 @@ public class MovieDetail extends AppCompatActivity {
     Movie movie = new Movie();
     RecyclerView rvActor;
     ActorRecyclerAdapter adapter;
-    String slug;
+    String slug = "";
     ImageView thumbImg;
     TextView tvInfoMovie, tvCategory, tvTime, tvTitle, tvContent, tvCountry, tvDirector, tvLastUpdate;
     Button btnEpisodeCurrent, btnShared, btnWatchNow;
     ToggleButton btnFavorite;
-    String url = "https://phimapi.com/phim/cuoc-hen-song-con-phan-5";
+    String url = "https://phimapi.com/phim/";
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     CollectionReference node_ref = firestore.collection("Users");
     @Override
@@ -73,8 +73,12 @@ public class MovieDetail extends AppCompatActivity {
         }
         catch (NullPointerException e){}
         setContentView(R.layout.activity_movie_detail);
+        Intent it = getIntent();
+        Bundle bd = it.getBundleExtra("myPackage");
+        slug = bd.getString("slug");
+        String urlSlug = url+slug;
         addControls();
-        getDataMovie(url);
+        getDataMovie(urlSlug);
         addEvents();
 
     }

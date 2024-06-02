@@ -15,20 +15,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <TextView
-                android:id="@+id/txtSeach"
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/textSearch"
+                android:theme="@style/SearchView"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_margin="16dp"
                 android:background="@drawable/edittext_background"
-                android:drawableStart="@drawable/baseline_search_24"
-                android:drawablePadding="8dp"
-                android:ems="10"
-                android:hint="Search Movies..."
-                android:inputType="text"
-                android:padding="8dp"
-                android:textColorHint="@color/white"
-                android:textSize="22sp" />
+                android:textSize="20sp"
+                app:iconifiedByDefault="false"
+                app:queryHint="Search Movies..."
+                app:searchHintIcon="@drawable/baseline_search_24"
+                app:searchIcon="@drawable/baseline_search_24"
+                />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -46,7 +46,7 @@
                     app:layout_constraintVertical_bias="1.0" />
 
                 <ProgressBar
-                    android:id="@+id/progressBarSearch"
+                    android:id="@+id/loadSearch"
                     style="?android:attr/progressBarStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

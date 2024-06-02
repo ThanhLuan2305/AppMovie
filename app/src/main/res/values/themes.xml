@@ -15,4 +15,11 @@
     <style name="Theme.AppMovie.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.AppMovie.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="SearchView" parent="">
+        <!-- Text color -->
+        <item name="android:editTextColor">@color/white</item>
+        <!-- Hint text color -->
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:textSize">22sp</item>
+    </style>
 </resources>

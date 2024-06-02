@@ -17,7 +17,8 @@ public class TestOnClickFilm extends AppCompatActivity {
         setContentView(R.layout.activity_test_on_click_film);
         txtSlug = findViewById(R.id.txtSlug);
         Intent it = getIntent();
-        String slug = it.getStringExtra("slug");
+        Bundle bd = it.getBundleExtra("myPackage");
+        String slug = bd.getString("slug");
         txtSlug.setText(slug);
     }
 }

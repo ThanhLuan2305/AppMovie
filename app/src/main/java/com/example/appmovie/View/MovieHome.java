@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -25,6 +26,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.appmovie.Model.Home.Category;
 import com.example.appmovie.Model.Home.Item;
+import com.example.appmovie.Model.Home.ItemClickListener;
 import com.example.appmovie.Model.Home.ListFilm;
 import com.example.appmovie.Model.SliderItems;
 import com.example.appmovie.R;
@@ -45,6 +47,7 @@ public class MovieHome extends AppCompatActivity {
     private ProgressBar loading1, loading2, loading3;
     private ViewPager2 viewPager2;
     private Handler sliderHandler = new Handler();
+    TextView txtSeach;
     List<ListFilm> lstFilm = new ArrayList<>();
     List<Item> lstItem = new ArrayList<>();
     List<Category> lstCtg = new ArrayList<>();
@@ -56,6 +59,7 @@ public class MovieHome extends AppCompatActivity {
         banners();
         sendReques();
         loadCateglory();
+        clickSearch();
     }
 
     private void loadCateglory() {
@@ -119,20 +123,20 @@ public class MovieHome extends AppCompatActivity {
                 for (ListFilm x : lstFilm) {
                     lstItem = x.getItems();
                 }
-                adapterNewMovies= new FilmListAdapter(lstItem);
-                recyclerViewNewMovies.setAdapter(adapterNewMovies);
-
-                adapterUpcomming.setOnItemClickListener(new FilmListAdapter.OnItemClickListener() {
+                adapterNewMovies= new FilmListAdapter(lstItem, new ItemClickListener() {
                     @Override
-                    public void onClick(int position, Item item) {
-                        item = lstItem.get(position);
-                        Intent it = new Intent(getApplicationContext(), TestOnClickFilm.class );
-                        it.putExtra("slug", item.getSlug());
-                        startActivity(it);
+                    public void onClickItemFilm(Item item) {
+                        onClickGoToDetail(item);
                     }
                 });
+                recyclerViewNewMovies.setAdapter(adapterNewMovies);
 
-                adapterUpcomming= new FilmListAdapter(lstItem);
+                adapterUpcomming= new FilmListAdapter(lstItem, new ItemClickListener() {
+                    @Override
+                    public void onClickItemFilm(Item item) {
+                        onClickGoToDetail(item);
+                    }
+                });
                 recyclerViewUpcomming.setAdapter(adapterUpcomming);
             }
         }, error -> {
@@ -172,5 +176,24 @@ public class MovieHome extends AppCompatActivity {
         loading1 = findViewById(R.id.progressBar1);
         loading2 = findViewById(R.id.progressBar2);
         loading3 = findViewById(R.id.progressBar3);
+        txtSeach = findViewById(R.id.txtSeach);
+    }
+
+    private void clickSearch() {
+        txtSeach.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent it = new Intent(getApplicationContext(), SearchMovie.class);
+                startActivity(it);
+            }
+        });
+    }
+    private void onClickGoToDetail(Item item) {
+        String slug = item.getSlug();
+        Intent it = new Intent(getApplicationContext(), MovieDetail.class);
+        Bundle bd = new Bundle();
+        bd.putString("slug",slug);
+        it.putExtra("myPackage",bd);
+        startActivity(it);
     }
 }
