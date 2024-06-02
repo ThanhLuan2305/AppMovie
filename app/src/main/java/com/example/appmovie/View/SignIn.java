@@ -54,7 +54,6 @@ public class SignIn extends AppCompatActivity {
     FirebaseFirestore db;
     ActivityResultLauncher<Intent> googleSignInLauncher;
 
-    public static User currentUser;
     private static final int RC_SIGN_IN = 100;
 
     @Override
@@ -79,42 +78,9 @@ public class SignIn extends AppCompatActivity {
                     }
                 });
 
-        // Sự kiện đăng nhập của Firebase
-        FirebaseAuth.AuthStateListener authStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    getUserDataFromFirestore(user.getUid());
-                } else {
-                    currentUser = null;
-                }
-            }
-        };
-
         addControl();
         addEvent();
 
-    }
-
-    // Phương thức để lấy thông tin người dùng từ Firestore
-    private void getUserDataFromFirestore(String userId) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        DocumentReference userRef = db.collection("Users").document(userId);
-        userRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    currentUser = documentSnapshot.toObject(User.class);
-                    // Bây giờ currentUser chứa thông tin người dùng và có thể truy cập từ bất kỳ đâu trong ứng dụng
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("YourApplication", "Failed to get user data from Firestore: " + e.getMessage());
-            }
-        });
     }
 
     void addControl() {
