@@ -5,11 +5,5 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".View.TestOnClickFilm">
+    tools:context=".View.TestOnClickFilm"/>
 
-    <TextView
-        android:id="@+id/txtSlug"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textSize="20sp" />
