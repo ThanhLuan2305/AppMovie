@@ -61,6 +61,8 @@ public class WatchMovie extends AppCompatActivity {
                 // Put data into the intent as extras
 //                String url = "https://s2.phim1280.tv/20240310/Qah2fQHw/index.m3u8";
                 intent.putExtra("url", url.url);
+                String epName = arr.get(episodeRecyclerAdapter.getSelectedPosition()).filename;
+                intent.putExtra("epName", epName);
 
                 // Start SecondActivity
                 startActivity(intent);
