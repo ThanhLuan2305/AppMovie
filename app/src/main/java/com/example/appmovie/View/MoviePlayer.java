@@ -14,6 +14,7 @@ import android.media.browse.MediaBrowser;
 import android.net.Uri;
 import android.os.Bundle;
 
+import com.example.appmovie.Model.episodes;
 import com.example.appmovie.R;
 
 import java.net.URL;
