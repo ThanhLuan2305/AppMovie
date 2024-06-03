@@ -13,7 +13,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.example.appmovie.Dto.UserManager;
+import com.example.appmovie.Model.User;
 import com.example.appmovie.R;
 import com.example.appmovie.View.SignIn;
 import com.google.firebase.auth.FirebaseAuth;
@@ -25,6 +30,8 @@ import com.google.firebase.auth.FirebaseAuth;
  */
 public class ProfileFragment extends Fragment {
 
+    private TextView txtUserName, txtUserEmail;
+    private ImageView imgUser;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -72,6 +79,17 @@ public class ProfileFragment extends Fragment {
         Button btnOpenDy2 = view.findViewById(R.id.btnOpenDy2);
         ImageButton editProfileButton = view.findViewById(R.id.edit_profile_button);
         FrameLayout fm;
+
+        txtUserName = view.findViewById(R.id.user_name);
+        txtUserEmail = view.findViewById(R.id.user_email);
+        imgUser = view.findViewById(R.id.profile_image);
+
+        User user = UserManager.getInstance().getCurrentUser();
+        if (user != null) {
+            txtUserName.setText(user.Name);
+            txtUserEmail.setText(user.Email);
+            Glide.with(this).load(user.Image).into(imgUser);
+        }
 
         editProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
