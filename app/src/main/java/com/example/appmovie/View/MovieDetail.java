@@ -134,6 +134,7 @@ public class MovieDetail extends AppCompatActivity {
                 Intent intent = new Intent(MovieDetail.this, WatchMovie.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("Episodes", epis);
+                bundle.putString("MovieSlug",slug);
                 intent.putExtra("EpisodesPakage", bundle);
                 startActivity(intent);
             }
