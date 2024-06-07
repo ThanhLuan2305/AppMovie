@@ -7,7 +7,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -56,12 +59,12 @@ public class MovieDetail extends AppCompatActivity {
     Movie movie = new Movie();
     RecyclerView rvActor;
     ActorRecyclerAdapter adapter;
-    String slug = "";
+    String slug;
     ImageView thumbImg;
     TextView tvInfoMovie, tvCategory, tvTime, tvTitle, tvContent, tvCountry, tvDirector, tvLastUpdate;
     Button btnEpisodeCurrent, btnShared, btnWatchNow;
     ToggleButton btnFavorite;
-    String url = "https://phimapi.com/phim/";
+    String url = "https://phimapi.com/phim/cuoc-hen-song-con-phan-5";
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     CollectionReference node_ref = firestore.collection("Users");
     @Override
@@ -73,12 +76,8 @@ public class MovieDetail extends AppCompatActivity {
         }
         catch (NullPointerException e){}
         setContentView(R.layout.activity_movie_detail);
-        Intent it = getIntent();
-        Bundle bd = it.getBundleExtra("myPackage");
-        slug = bd.getString("slug");
-        String urlSlug = url+slug;
         addControls();
-        getDataMovie(urlSlug);
+        getDataMovie(url);
         addEvents();
 
     }

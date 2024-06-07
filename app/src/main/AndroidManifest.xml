@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -16,18 +17,6 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".View.TestOnClickFilm"
-            android:exported="false" />
-        <activity
-            android:name=".View.MovieDetail"
-            android:exported="false" />
-        <activity
-            android:name=".View.SearchMovie"
-            android:exported="false" />
-        <activity
-            android:name=".View.SplashActivity"
-            android:exported="false" />
-        <activity
             android:name=".View.ForgotPass"
             android:exported="false" />
         <activity
@@ -38,16 +27,6 @@
             android:exported="false" />
         <activity
             android:name=".View.Profile"
-            android:exported="false" />
-        <activity
-            android:name=".View.MovieHome"
-            android:exported="false" />
-        <activity
-            android:name=".View.MoviePlayer"
-            android:exported="false"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -56,8 +35,15 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".View.WatchMovie"
+            android:name=".View.MoviePlayer"
+            android:exported="false"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".MainActivity"
             android:exported="false" />
+        <activity
+            android:name=".View.WatchMovie"
+            android:exported="true" />
     </application>
 
 </manifest>
