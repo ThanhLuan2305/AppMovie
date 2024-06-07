@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.appmovie.Model.episodes;
 import com.example.appmovie.R;
 
 public class MoviePlayer extends AppCompatActivity {

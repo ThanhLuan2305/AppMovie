@@ -7,7 +7,10 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -46,8 +49,12 @@ import org.json.JSONObject;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class MovieDetail extends AppCompatActivity {
     ArrayList<String> lstActor = new ArrayList<>();
@@ -56,10 +63,11 @@ public class MovieDetail extends AppCompatActivity {
     Movie movie = new Movie();
     RecyclerView rvActor;
     ActorRecyclerAdapter adapter;
+    Dialog mDialog;
     String slug = "";
     ImageView thumbImg;
     TextView tvInfoMovie, tvCategory, tvTime, tvTitle, tvContent, tvCountry, tvDirector, tvLastUpdate;
-    Button btnEpisodeCurrent, btnShared, btnWatchNow;
+    Button btnEpisodeCurrent, btnShared, btnWatchNow, btnWatchTrailer;
     ToggleButton btnFavorite;
     String url = "https://phimapi.com/phim/";
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
@@ -80,7 +88,7 @@ public class MovieDetail extends AppCompatActivity {
         addControls();
         getDataMovie(urlSlug);
         addEvents();
-
+        mDialog = new Dialog(MovieDetail.this);
     }
     void loadAdapterActor() {
         rvActor.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.HORIZONTAL));
@@ -105,6 +113,7 @@ public class MovieDetail extends AppCompatActivity {
         btnEpisodeCurrent = (Button) findViewById(R.id.btnEpisodeCurrent);
         btnShared = (Button) findViewById(R.id.btnShared);
         btnWatchNow = (Button) findViewById(R.id.btnWatchNow);
+        btnWatchTrailer = (Button) findViewById(R.id.btnWatchTrailer);
         btnFavorite = (ToggleButton) findViewById(R.id.btnFavorite);
     }
     void addEvents() {
@@ -131,13 +140,48 @@ public class MovieDetail extends AppCompatActivity {
         btnWatchNow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MovieDetail.this, WatchMovie.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("Episodes", epis);
-                intent.putExtra("EpisodesPakage", bundle);
-                startActivity(intent);
+                if(epis.server_data.size() <= 0) {
+                    Toast.makeText(MovieDetail.this, "Không có phim", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Intent intent = new Intent(MovieDetail.this, WatchMovie.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("Episodes", epis);
+                    intent.putExtra("EpisodesPakage", bundle);
+                    startActivity(intent);
+                }
             }
         });
+        btnWatchTrailer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(movie.trailer_url.isEmpty()) {
+                    Toast.makeText(MovieDetail.this, "Không có trailer", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    showDialog();
+                }
+            }
+        });
+        btnEpisodeCurrent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                if(epis.server_data.size() <= 0) {
+//
+//                }
+//                else {
+//                    Intent intent = new Intent(MovieDetail.this, WatchMovie.class);
+//                    Bundle bundle = new Bundle();
+//                    bundle.putSerializable("CurrentEpisode", epis.server_data.get(epis.server_data.size()-1));
+//                    intent.putExtra("EpisodesPakage", bundle);
+//                    startActivity(intent);
+//                }
+            }
+        });
+    }
+    public void showDialog() {
+        CustomDialogFragment dialogFragment = CustomDialogFragment.newInstance(movie.trailer_url);
+        dialogFragment.show(getSupportFragmentManager(), "custom_dialog");
     }
     public void getDataMovie(String url) {
         RequestQueue requestQueue = Volley.newRequestQueue(MovieDetail.this);
@@ -206,7 +250,7 @@ public class MovieDetail extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        Toast.makeText(MovieDetail.this, "Đã hủy phim yêu thích", Toast.LENGTH_LONG).show();
+                        Toast.makeText(MovieDetail.this, "Đã xóa phim yêu thích", Toast.LENGTH_LONG).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -283,12 +327,13 @@ public class MovieDetail extends AppCompatActivity {
         }
 
         JSONObject tObj = new JSONObject(movieObj.getString("modified"));
-        SimpleDateFormat dateFormatInput = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        SimpleDateFormat dateFormatOutput = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        Date thisDate = new Date();
-        Date date = dateFormatInput.parse(tObj.getString("time"));
-        DateFormat date1 = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        movie.last_update = date1.parse(dateFormatOutput.format(thisDate));
+        String inputPattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
+        String outputPattern = "HH:mm:ss dd:MM:yyyy";
+        SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
+        inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
+        Date date = inputFormat.parse(tObj.getString("time"));
+        movie.last_update = outputFormat.format(date);
         movie.episode_current = movieObj.getString("episode_current");
 
         asignData();
@@ -346,6 +391,6 @@ public class MovieDetail extends AppCompatActivity {
         btnEpisodeCurrent.setText(movie.episode_current);
         tvCountry.setText(convertToCountyList());
         tvDirector.setText(convertToDirectorList());
-        tvLastUpdate.setText(movie.last_update.toString());
+        tvLastUpdate.setText(movie.last_update);
     }
 }

@@ -34,7 +34,7 @@
             android:name=".View.SignUp"
             android:exported="false" />
         <activity
-            android:name=".View.SignIn"
+            android:name=".View.MovieHome"
             android:exported="false" />
         <activity
             android:name=".View.Profile"
