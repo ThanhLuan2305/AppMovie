@@ -20,6 +20,6 @@ public class Movie {
     public ArrayList<String> actor;
     public ArrayList<String> country;
     public ArrayList<String> director;
-    public Date last_update;
+    public String last_update;
     public String episode_current;
 }

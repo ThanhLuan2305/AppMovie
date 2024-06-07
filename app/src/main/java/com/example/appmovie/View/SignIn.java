@@ -166,7 +166,7 @@ public class SignIn extends AppCompatActivity {
                         progressBar.setVisibility(View.GONE);
                         if (task.isSuccessful()) {
                             fetchUserData();
-                            Intent intent = new Intent(SignIn.this, MainActivity.class);
+                            Intent intent = new Intent(SignIn.this, MovieHome.class);
                             startActivity(intent);
                             finish();
                         } else {

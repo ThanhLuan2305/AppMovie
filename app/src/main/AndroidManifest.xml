@@ -34,20 +34,20 @@
             android:name=".View.SignUp"
             android:exported="false" />
         <activity
-            android:name=".View.SignIn"
+            android:name=".View.MovieHome"
             android:exported="false" />
         <activity
             android:name=".View.Profile"
             android:exported="false" />
         <activity
-            android:name=".View.MovieHome"
+            android:name=".MainActivity"
             android:exported="false" />
         <activity
             android:name=".View.MoviePlayer"
             android:exported="false"
             android:screenOrientation="landscape" />
         <activity
-            android:name=".MainActivity"
+            android:name=".View.MovieHome"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
