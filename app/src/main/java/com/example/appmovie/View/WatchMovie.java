@@ -9,38 +9,46 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.example.appmovie.Dto.EpUrl;
+import com.example.appmovie.Model.episode;
 import com.example.appmovie.Model.episodes;
 import com.example.appmovie.R;
 import com.example.appmovie.View.Adapter.EpisodeRecyclerAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.util.List;
+
 public class WatchMovie extends AppCompatActivity {
     RecyclerView recyclerView;
+    TextView currentEp;
     RecyclerView.LayoutManager layoutManager;
     EpisodeRecyclerAdapter episodeRecyclerAdapter;
     FloatingActionButton playBtn;
-    String url = "";
-    int[] arr = {0,1,2,2,3,4,3,1,3,3,2,1,2,212,31,32,3,123,123,12,312,313,123,12,312,3,123,123};
+    EpUrl url = new EpUrl();
+    List<episode> arr;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_watch_movie);
-        initView();
-        addEvent();
 
         Intent callerIntent = getIntent();
         Bundle packageFroCaller = callerIntent.getBundleExtra("EpisodesPakage");
         episodes epis = (episodes) packageFroCaller.getSerializable("Episodes");
-        url = epis.server_data.get(0).link_m3u8;
+        arr = epis.server_data;
+        url.url = epis.server_data.get(0).link_m3u8;
+        initView();
+        addEvent();
+
     }
     void initView(){
+        currentEp = findViewById(R.id.currentEp);
         playBtn = findViewById(R.id.playbtn);
-
         recyclerView = findViewById(R.id.episodeList);
         layoutManager = new GridLayoutManager(this,4);
         recyclerView.setLayoutManager(layoutManager);
-        episodeRecyclerAdapter = new EpisodeRecyclerAdapter(arr);
+        episodeRecyclerAdapter = new EpisodeRecyclerAdapter(arr, url, currentEp);
         recyclerView.setAdapter(episodeRecyclerAdapter);
         recyclerView.setHasFixedSize(true);
     }
@@ -52,7 +60,7 @@ public class WatchMovie extends AppCompatActivity {
 
                 // Put data into the intent as extras
 //                String url = "https://s2.phim1280.tv/20240310/Qah2fQHw/index.m3u8";
-                intent.putExtra("url", url);
+                intent.putExtra("url", url.url);
 
                 // Start SecondActivity
                 startActivity(intent);

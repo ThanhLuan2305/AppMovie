@@ -4,18 +4,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.appmovie.Dto.EpUrl;
+import com.example.appmovie.Model.episode;
 import com.example.appmovie.R;
+
+import java.util.List;
 
 public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecyclerAdapter.MyViewHolder> {
 
-    int[] arr;
+    List<episode> arr;
+    EpUrl url;
+    TextView currentEp;
+    private int selectedPosition = 0;
 
-    public EpisodeRecyclerAdapter(int[] arr) {
+    public EpisodeRecyclerAdapter(List<episode> arr, EpUrl url, TextView currentEp) {
         this.arr = arr;
+        this.url = url;
+        this.currentEp = currentEp;
     }
 
     @NonNull
@@ -28,13 +39,35 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        int finalPosition = position;
         position++;
         holder.episodesBtn.setText("" + position);
+        if (selectedPosition == finalPosition) {
+            holder.episodesBtn.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.highlight_color));
+        } else {
+            holder.episodesBtn.setBackgroundColor(ContextCompat.getColor(holder.itemView.getContext(), R.color.ep));
+        }
+
+        holder.episodesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                url.url = arr.get(finalPosition).link_m3u8;
+                selectedPosition = finalPosition;
+                currentEp.setText("Tap " + (selectedPosition + 1));
+                notifyDataSetChanged();
+            }
+        });
+       /* holder.episodesBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                url.url = arr.get(finalPosition).link_m3u8;
+            }
+        });*/
     }
 
     @Override
     public int getItemCount() {
-        return arr.length;
+        return arr.size();
     }
     public class MyViewHolder extends RecyclerView.ViewHolder{
 

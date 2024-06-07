@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -16,7 +17,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.appmovie.Dto.UserManager;
 import com.example.appmovie.MainActivity;
+import com.example.appmovie.Model.User;
 import com.example.appmovie.R;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -24,6 +27,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
@@ -76,6 +81,25 @@ public class SignIn extends AppCompatActivity {
 
         addControl();
         addEvent();
+
+    }
+
+    private void fetchUserData() {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        FirebaseFirestore.getInstance().collection("Users").document(userId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful() && task.getResult() != null) {
+                            User user = task.getResult().toObject(User.class);
+                            UserManager.getInstance().setCurrentUser(user);
+                        } else {
+                            // Handle errors here
+                        }
+                    }
+                });
     }
 
     void addControl() {
@@ -101,6 +125,7 @@ public class SignIn extends AppCompatActivity {
                 Intent intent = new Intent(SignIn.this, SignUp.class);
                 startActivity(intent);
                 finish();
+                fetchUserData();
             }
         });
 
@@ -140,6 +165,7 @@ public class SignIn extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         progressBar.setVisibility(View.GONE);
                         if (task.isSuccessful()) {
+                            fetchUserData();
                             Intent intent = new Intent(SignIn.this, MainActivity.class);
                             startActivity(intent);
                             finish();
@@ -165,20 +191,6 @@ public class SignIn extends AppCompatActivity {
     private void signInWithGoogle() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         googleSignInLauncher.launch(signInIntent);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_SIGN_IN) {
-            try {
-                Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-                GoogleSignInAccount account = task.getResult(ApiException.class);
-                firebaseAuthWithGoogle(account.getIdToken());
-            } catch (ApiException e) {
-                Toast.makeText(this, "Google đăng nhập thất bại: " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
@@ -223,14 +235,18 @@ public class SignIn extends AppCompatActivity {
         }
     }
 
-
     private void handleSignInResult(Intent data) {
         try {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             GoogleSignInAccount account = task.getResult(ApiException.class);
-            firebaseAuthWithGoogle(account.getIdToken());
+            if (account != null) {
+                firebaseAuthWithGoogle(account.getIdToken());
+            } else {
+                Toast.makeText(this, "Google sign-in failed.", Toast.LENGTH_SHORT).show();
+            }
         } catch (ApiException e) {
-            Toast.makeText(this, "Google đăng nhập thất bại: " + e.getStatusCode(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Google sign-in failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
+
 }

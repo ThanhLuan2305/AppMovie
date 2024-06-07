@@ -64,12 +64,12 @@ public class MovieDetail extends AppCompatActivity {
     RecyclerView rvActor;
     ActorRecyclerAdapter adapter;
     Dialog mDialog;
-    String slug;
+    String slug = "";
     ImageView thumbImg;
     TextView tvInfoMovie, tvCategory, tvTime, tvTitle, tvContent, tvCountry, tvDirector, tvLastUpdate;
     Button btnEpisodeCurrent, btnShared, btnWatchNow, btnWatchTrailer;
     ToggleButton btnFavorite;
-    String url = "https://phimapi.com/phim/chu-nghia-ngoai-hinh";
+    String url = "https://phimapi.com/phim/";
     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
     CollectionReference node_ref = firestore.collection("Users");
     @Override
@@ -81,8 +81,12 @@ public class MovieDetail extends AppCompatActivity {
         }
         catch (NullPointerException e){}
         setContentView(R.layout.activity_movie_detail);
+        Intent it = getIntent();
+        Bundle bd = it.getBundleExtra("myPackage");
+        slug = bd.getString("slug");
+        String urlSlug = url+slug;
         addControls();
-        getDataMovie(url);
+        getDataMovie(urlSlug);
         addEvents();
         mDialog = new Dialog(MovieDetail.this);
     }

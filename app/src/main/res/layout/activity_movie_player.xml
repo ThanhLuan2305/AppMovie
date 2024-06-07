@@ -11,7 +11,21 @@
     <androidx.media3.ui.PlayerView
         android:id="@+id/PlayerViewMovie"
         android:layout_width="match_parent"
-        android:layout_centerInParent="true"
         android:layout_height="match_parent" />
 
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="26dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/ic_back"
+        android:visibility="visible" />
 </RelativeLayout>

@@ -41,7 +41,7 @@
         android:layout_marginEnd="20dp"
         android:background="#0897B4"
         android:padding="10dp"
-        android:text="Tập 10"
+        android:text="Tập 1"
         android:textColor="@color/white"
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
