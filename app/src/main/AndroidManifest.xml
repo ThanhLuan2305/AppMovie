@@ -27,7 +27,19 @@
             android:exported="false" />
         <activity
             android:name=".View.Profile"
-            android:exported="true">
+            android:exported="false" />
+        <activity
+            android:name=".View.MovieDetail"
+            android:exported="false" />
+        <activity
+            android:name=".View.SearchMovie"
+            android:exported="false" />
+        <activity
+            android:name=".View.MoviePlayer"
+            android:exported="false"
+            android:screenOrientation="landscape" />
+        <activity
+            android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -35,15 +47,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".View.MoviePlayer"
-            android:exported="false"
-            android:screenOrientation="landscape" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
-        <activity
             android:name=".View.WatchMovie"
-            android:exported="true" />
+            android:exported="false" />
     </application>
 
 </manifest>

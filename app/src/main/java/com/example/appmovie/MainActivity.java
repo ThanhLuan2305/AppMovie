@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.FrameLayout;
 
+import com.example.appmovie.Frag.MovieFragment;
 import com.example.appmovie.Frag.ProfileFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
         fm = (FrameLayout) findViewById(R.id.frameFragment);
         bttnav = findViewById(R.id.bottom_nav);
+        loadFragment(new MovieFragment());
         bttnav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -37,6 +39,11 @@ public class MainActivity extends AppCompatActivity {
                 if(id==R.id.menu_item_profile)
                 {
                     loadFragment(new ProfileFragment());
+                    return true;
+                }
+                else if(id==R.id.nav_home)
+                {
+                    loadFragment(new MovieFragment());
                     return true;
                 }
                 return false;
