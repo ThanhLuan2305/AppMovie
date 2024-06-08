@@ -1,4 +1,4 @@
-package com.example.appmovie.View.Adapter;
+package com.example.appmovie.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
@@ -26,6 +26,7 @@ import com.example.appmovie.Model.Search.IOnClick;
 import com.example.appmovie.Model.Search.Item;
 import com.example.appmovie.Model.Search.ListSearch;
 import com.example.appmovie.R;
+import com.example.appmovie.View.Adapter.SearchMovieRecyclerViewAdapter;
 import com.example.appmovie.View.MovieDetail;
 import com.google.gson.Gson;
 

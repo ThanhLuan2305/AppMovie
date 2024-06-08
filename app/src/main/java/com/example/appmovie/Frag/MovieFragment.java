@@ -35,7 +35,7 @@ import com.example.appmovie.Model.Home.ListFilm;
 import com.example.appmovie.Model.IOnClickCtgMovie;
 import com.example.appmovie.Model.SliderItems;
 import com.example.appmovie.R;
-import com.example.appmovie.View.Adapter.CategoryActivity;
+import com.example.appmovie.View.CategoryActivity;
 import com.example.appmovie.View.Adapter.CtgFilmRecyclerAdapter;
 import com.example.appmovie.View.Adapter.FilmListAdapter;
 import com.example.appmovie.View.Adapter.SliderAdapters;
