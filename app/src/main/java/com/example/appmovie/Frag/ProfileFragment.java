@@ -4,24 +4,27 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.appmovie.Dto.UserManager;
+import com.example.appmovie.Model.FavourFilm;
 import com.example.appmovie.Model.User;
 import com.example.appmovie.R;
+import com.example.appmovie.View.Adapter.MovieAdapter;
+import com.example.appmovie.View.MovieDetail;
 import com.example.appmovie.View.SignIn;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,6 +34,7 @@ import com.google.firebase.auth.FirebaseAuth;
 public class ProfileFragment extends Fragment {
 
     private TextView txtUserName, txtUserEmail;
+    ListView listView;
     private ImageView imgUser;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -75,14 +79,13 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        Button btnOpenDy1 = view.findViewById(R.id.btnOpenDy1);
-        Button btnOpenDy2 = view.findViewById(R.id.btnOpenDy2);
-        ImageButton editProfileButton = view.findViewById(R.id.edit_profile_button);
-        FrameLayout fm;
+        ImageButton editProfileButton = view.findViewById(R.id.logout_button);
 
         txtUserName = view.findViewById(R.id.user_name);
         txtUserEmail = view.findViewById(R.id.user_email);
         imgUser = view.findViewById(R.id.profile_image);
+
+        initView(view);
 
         User user = UserManager.getInstance().getCurrentUser();
         if (user != null) {
@@ -90,6 +93,10 @@ public class ProfileFragment extends Fragment {
             txtUserName.setText(user.Name);
             txtUserEmail.setText(user.Email);
             Glide.with(this).load(user.Image).into(imgUser);
+            for(FavourFilm fv: user.Favour_film){
+                Log.d("FILM", fv.origin_name);
+            }
+            favourMovie(user.Favour_film);
         }
 
         editProfileButton.setOnClickListener(new View.OnClickListener() {
@@ -101,31 +108,35 @@ public class ProfileFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-
-        btnOpenDy1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadFragment(new FavouriteFragment());
-            }
-        });
-
-        btnOpenDy2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loadFragment(new HistoryFragment());
-            }
-        });
-
         return view;
     }
 
-    public void loadFragment(Fragment fragment)
-    {
-        FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.frame_fragment_profile,fragment);
-        fragmentTransaction.commit();
+    private void favourMovie(ArrayList<FavourFilm> films) {
+        ArrayList<String> movieNames = new ArrayList<>();
+        for (FavourFilm film : films) {
+            movieNames.add(film.origin_name);
+        }
+
+        MovieAdapter adapter = new MovieAdapter(getContext(), R.layout.layout_item_movie, films);
+        listView.setAdapter(adapter);
+        adapter.setOnItemClickListener(new MovieAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(FavourFilm film) {
+                onClickGoToDetail(film);
+            }
+        });
     }
 
+    private void initView(View view) {
+        listView = view.findViewById(R.id.listViewMovies);
+    }
+
+    private void onClickGoToDetail(FavourFilm film) {
+        String slug = film.slug;
+        Intent it = new Intent(getActivity(), MovieDetail.class);
+        Bundle bd = new Bundle();
+        bd.putString("slug",slug);
+        it.putExtra("myPackage",bd);
+        startActivity(it);
+    }
 }

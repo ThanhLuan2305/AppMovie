@@ -279,7 +279,6 @@ public class MovieFragment extends Fragment {
                 String url = "https://phimapi.com/danh-sach/phim-moi-cap-nhat?page=" + numPage;
                 sendRequesAllMovie(url);
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
