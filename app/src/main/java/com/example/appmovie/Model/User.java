@@ -3,6 +3,7 @@ package com.example.appmovie.Model;
 import java.util.ArrayList;
 
 public class User {
+    public String Id;
     public String Name;
     public String Image;
     public String Email;

@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.appmovie.Dto.EpUrl;
+import com.example.appmovie.Frag.CommentDialogFragment;
 import com.example.appmovie.Model.episode;
 import com.example.appmovie.Model.episodes;
 import com.example.appmovie.R;
@@ -26,8 +27,10 @@ public class WatchMovie extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     EpisodeRecyclerAdapter episodeRecyclerAdapter;
     FloatingActionButton playBtn;
+    Button viewComment;
     EpUrl url = new EpUrl();
     List<episode> arr;
+    String slug= "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +39,7 @@ public class WatchMovie extends AppCompatActivity {
         Intent callerIntent = getIntent();
         Bundle packageFroCaller = callerIntent.getBundleExtra("EpisodesPakage");
         episodes epis = (episodes) packageFroCaller.getSerializable("Episodes");
+        slug = (String) packageFroCaller.getString("MovieSlug");
         arr = epis.server_data;
         url.url = epis.server_data.get(0).link_m3u8;
         initView();
@@ -50,6 +54,7 @@ public class WatchMovie extends AppCompatActivity {
         episodeRecyclerAdapter = new EpisodeRecyclerAdapter(arr, url, currentEp);
         recyclerView.setAdapter(episodeRecyclerAdapter);
         recyclerView.setHasFixedSize(true);
+        viewComment = findViewById(R.id.viewCmtBtn);
     }
     void addEvent(){
         playBtn.setOnClickListener(new View.OnClickListener() {
@@ -60,9 +65,19 @@ public class WatchMovie extends AppCompatActivity {
                 // Put data into the intent as extras
 //                String url = "https://s2.phim1280.tv/20240310/Qah2fQHw/index.m3u8";
                 intent.putExtra("url", url.url);
+                String epName = arr.get(episodeRecyclerAdapter.getSelectedPosition()).filename;
+                intent.putExtra("epName", epName);
 
                 // Start SecondActivity
                 startActivity(intent);
+            }
+        });
+        viewComment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CommentDialogFragment commentDialogFragment = new CommentDialogFragment(slug);
+                    commentDialogFragment.show(getSupportFragmentManager(), "comment_dialog");
+
             }
         });
     }
