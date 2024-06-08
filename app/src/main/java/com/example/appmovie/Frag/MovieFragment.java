@@ -32,8 +32,10 @@ import com.example.appmovie.Model.Home.Category;
 import com.example.appmovie.Model.Home.Item;
 import com.example.appmovie.Model.Home.ItemClickListener;
 import com.example.appmovie.Model.Home.ListFilm;
+import com.example.appmovie.Model.IOnClickCtgMovie;
 import com.example.appmovie.Model.SliderItems;
 import com.example.appmovie.R;
+import com.example.appmovie.View.Adapter.CategoryActivity;
 import com.example.appmovie.View.Adapter.CtgFilmRecyclerAdapter;
 import com.example.appmovie.View.Adapter.FilmListAdapter;
 import com.example.appmovie.View.Adapter.SliderAdapters;
@@ -51,7 +53,7 @@ import java.util.List;
  */
 public class MovieFragment extends Fragment {
 
-    private RecyclerView.Adapter adapterCategory;
+    private CtgFilmRecyclerAdapter adapterCategory;
     private Spinner spnPage;
     private FilmListAdapter adapterNewMovies,adapterAllMovie;
     private RecyclerView recyclerViewNewMovies, recyclerViewAllMovie, recyclerViewCategory;
@@ -132,7 +134,12 @@ public class MovieFragment extends Fragment {
         lstCtg.add(category3);
         lstCtg.add(category4);
         loading2.setVisibility(View.GONE);
-        adapterCategory= new CtgFilmRecyclerAdapter(lstCtg);
+        adapterCategory= new CtgFilmRecyclerAdapter(lstCtg, new IOnClickCtgMovie() {
+            @Override
+            public void onClick(Category typeMovie) {
+                onClickGoToCategory(typeMovie);
+            }
+        });
         recyclerViewCategory.setAdapter(adapterCategory);
     }
     private void banners() {
@@ -244,15 +251,15 @@ public class MovieFragment extends Fragment {
         viewPager2=view.findViewById(R.id.viewpagerSlider);
         recyclerViewNewMovies = view.findViewById(R.id.view1);
         recyclerViewNewMovies.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL,false));
-        recyclerViewAllMovie = view.findViewById(R.id.view3);
+        recyclerViewAllMovie = view.findViewById(R.id.viewCtg);
         recyclerViewAllMovie.setLayoutManager(new GridLayoutManager(getActivity(), 2, LinearLayoutManager.VERTICAL,false));
         recyclerViewCategory = view.findViewById(R.id.view2);
         recyclerViewCategory.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL,false));
         loading1 = view.findViewById(R.id.progressBar1);
         loading2 = view.findViewById(R.id.progressBar2);
-        loading3 = view.findViewById(R.id.progressBar3);
+        loading3 = view.findViewById(R.id.progressBarCtg);
         txtSeach = view.findViewById(R.id.txtSeach);
-        spnPage = view.findViewById(R.id.spinnerPage);
+        spnPage = view.findViewById(R.id.spinnerPageCtg);
     }
 
     private void eventClick() {
@@ -293,6 +300,15 @@ public class MovieFragment extends Fragment {
         Intent it = new Intent(getActivity(), MovieDetail.class);
         Bundle bd = new Bundle();
         bd.putString("slug",slug);
+        it.putExtra("myPackage",bd);
+        startActivity(it);
+    }
+    private void onClickGoToCategory(Category ctg) {
+        String id = ctg.getId();
+        String name = ctg.getName();
+        Intent it = new Intent(getActivity(), CategoryActivity.class);
+        Bundle bd = new Bundle();
+        bd.putString("id",id);
         it.putExtra("myPackage",bd);
         startActivity(it);
     }

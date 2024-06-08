@@ -46,9 +46,9 @@ public class SearchMovieRecyclerViewAdapter  extends RecyclerView.Adapter<Search
 
         RequestOptions requestOptions = new RequestOptions()
                 .transform(new CenterCrop(), new RoundedCorners(30));
-
+        String urlImg = "https://img.phimapi.com/" + item.getThumbUrl();
         Glide.with(context)
-                .load(item.getThumbUrl())
+                .load(urlImg)
                 .apply(requestOptions)
                 .into(holder.pic);
 

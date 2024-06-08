@@ -36,14 +36,12 @@ public class SearchMovie extends AppCompatActivity {
     SearchView searchText;
     RecyclerView searchView;
     ProgressBar loadSearch;
-    ListSearch listSearchs = new ListSearch();
     List<Item> lstItem = new ArrayList<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_movie);
         initView();
-        //sendReques();
         eventClick();
     }
     private void initView() {
