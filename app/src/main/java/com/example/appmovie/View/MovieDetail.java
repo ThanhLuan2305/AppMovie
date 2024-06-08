@@ -35,11 +35,15 @@ import com.example.appmovie.Model.episode;
 import com.example.appmovie.Model.episodes;
 import com.example.appmovie.R;
 import com.example.appmovie.View.Adapter.ActorRecyclerAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firestore.bundle.BundledQueryOrBuilder;
 import com.squareup.picasso.Picasso;
@@ -56,6 +60,11 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
 public class MovieDetail extends AppCompatActivity {
@@ -63,7 +72,7 @@ public class MovieDetail extends AppCompatActivity {
     episodes epis = new episodes();
     User currentUser;
     String userId = "";
-
+    Set<FavourFilm> listFavourFilm = new HashSet<>();
     Movie movie = new Movie();
     RecyclerView rvActor;
     ActorRecyclerAdapter adapter;
@@ -81,6 +90,7 @@ public class MovieDetail extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         currentUser = UserManager.getInstance().getCurrentUser();
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        listFavourFilm.addAll(currentUser.Favour_film);
         try
         {
             this.getSupportActionBar().hide();
@@ -92,6 +102,7 @@ public class MovieDetail extends AppCompatActivity {
         slug = bd.getString("slug");
         String urlSlug = url+slug;
         addControls();
+        loadFavour();
         getDataMovie(urlSlug);
         addEvents();
         mDialog = new Dialog(MovieDetail.this);
@@ -190,6 +201,28 @@ public class MovieDetail extends AppCompatActivity {
         CustomDialogFragment dialogFragment = CustomDialogFragment.newInstance(movie.trailer_url);
         dialogFragment.show(getSupportFragmentManager(), "custom_dialog");
     }
+    void loadFavour() {
+        node_ref.document(userId)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if(task.isSuccessful()) {
+                            DocumentSnapshot documentSnapshot = task.getResult();
+                            User user = documentSnapshot.toObject(User.class);
+                            btnFavorite.setChecked(false);
+                            if(user != null && user.Favour_film != null) {
+                                for(FavourFilm favourFilm : user.Favour_film) {
+                                    if(favourFilm.movie_id.equals(movie.id)) {
+                                        btnFavorite.setChecked(true);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+    }
     public void getDataMovie(String url) {
         RequestQueue requestQueue = Volley.newRequestQueue(MovieDetail.this);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -211,24 +244,21 @@ public class MovieDetail extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
     void addFavourFilm() {
-        User user = new User(
-                currentUser.Name,
-                currentUser.Image,
-                currentUser.Email,
-                new ArrayList<FavourFilm>()
-        );
-        user.Favour_film.add(new FavourFilm(
+        currentUser.Favour_film.add(new FavourFilm(
                 movie.id,
                 movie.slug,
                 movie.origin_name,
                 movie.poster_url
         ));
+        Set<FavourFilm> listFavour = new LinkedHashSet<>(currentUser.Favour_film);
+        currentUser.Favour_film.clear();
+        currentUser.Favour_film.addAll(listFavour);
         node_ref.document(userId)
-                .set(user)
+                .set(currentUser)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        Toast.makeText(MovieDetail.this, "Đã thêm vào phim yêu thích", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(MovieDetail.this, "Đã thêm vào phim yêu thích", Toast.LENGTH_LONG).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -239,25 +269,19 @@ public class MovieDetail extends AppCompatActivity {
                 });
     }
     void deleteFavourFilm() {
-        User user = new User(
-                currentUser.Name,
-                currentUser.Image,
-                currentUser.Email,
-                new ArrayList<FavourFilm>()
-        );
         FavourFilm film = new FavourFilm(
                 movie.id,
                 movie.slug,
                 movie.origin_name,
                 movie.poster_url
         );
-        user.Favour_film.remove(film);
+        currentUser.Favour_film.remove(film);
         node_ref.document(userId)
-                .set(user)
+                .set(currentUser)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void unused) {
-                        Toast.makeText(MovieDetail.this, "Đã xóa phim yêu thích", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(MovieDetail.this, "Đã thêm vào phim yêu thích", Toast.LENGTH_LONG).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -335,9 +359,9 @@ public class MovieDetail extends AppCompatActivity {
 
         JSONObject tObj = new JSONObject(movieObj.getString("modified"));
         String inputPattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-        String outputPattern = "HH:mm:ss dd:MM:yyyy";
+        String outputPattern = "HH:mm:ss dd/MM/yyyy";
         SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern);
-        inputFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        inputFormat.setTimeZone(TimeZone.getTimeZone("Asia/Ho_Chi_Minh"));
         SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern);
         Date date = inputFormat.parse(tObj.getString("time"));
         movie.last_update = outputFormat.format(date);
@@ -399,5 +423,6 @@ public class MovieDetail extends AppCompatActivity {
         tvCountry.setText(convertToCountyList());
         tvDirector.setText(convertToDirectorList());
         tvLastUpdate.setText(movie.last_update);
+        loadFavour();
     }
 }
