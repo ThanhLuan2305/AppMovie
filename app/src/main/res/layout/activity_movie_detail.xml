@@ -16,8 +16,8 @@
         <ImageView
             android:id="@+id/thumbImg"
             android:layout_width="match_parent"
-            android:src="@drawable/dal"
-            android:layout_height="wrap_content"
+            android:src="@drawable/load_picture"
+            android:layout_height="match_parent"
             android:scaleType="centerCrop"/>
 
         <ImageView
@@ -40,7 +40,7 @@
                 android:padding="10dp"
                 android:layout_gravity="bottom"
                 android:background="@drawable/gradient_infor_movie"
-                android:text="12 tập  |   2024  |   Vietsub"
+                android:text="                        "
                 android:textColor="@color/white" />
 
 
@@ -103,7 +103,7 @@
                     android:gravity="left"
                     android:textColor="#979292"
                     android:textSize="15dp"
-                    android:text="Hành động • Hài hước • Viễn tưởng • Phiêu lưu • Khoa học" />
+                    android:text="" />
 
                 <TextView
                     android:id="@+id/tvTime"
@@ -113,7 +113,7 @@
                     android:gravity="right"
                     android:textColor="#979292"
                     android:textSize="15dp"
-                    android:text="24p / tập" />
+                    android:text="" />
             </LinearLayout>
 
             <LinearLayout
@@ -126,7 +126,7 @@
                     android:id="@+id/tvTitle"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
-                    android:text="Date A Live (Season 5)"
+                    android:text=""
                     android:textSize="25dp"
                     android:textStyle="bold" />
 
@@ -138,7 +138,7 @@
                         android:id="@+id/tvContent"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:text="Date A Live IV là phần anime thứ 4 chuyển thể từ light novel cùng tên do Koshi Tachibana sáng tác. Nhân vật chính của Date A Live là Shido, một chàng trai sở hữu khả năng đặc biệt có thể phong ấn các Tinh Linh - những cô gái có sức mạnh vô cùng khủng khiếp. Để kích hoạt phong ấn, Shido sẽ phải tiếp cận từng Tinh Linh và khiến họ yêu anh. Từ đây câu chuyện tán gái cứu thế giới hấp dẫn chính thức bắt đầu." />
+                        android:text="" />
 
                 </ScrollView>
             </LinearLayout>
@@ -178,7 +178,7 @@
                             android:textSize="15dp"
                             android:textStyle="bold"
                             android:layout_gravity="center_vertical"
-                            android:text="tập 16"/>
+                            android:text=""/>
                     </LinearLayout>
                 </LinearLayout>
 
@@ -265,7 +265,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="Nhật Bản"
+                                android:text=""
                                 android:textColor="#979292" />
 
                         </LinearLayout>
@@ -288,7 +288,7 @@
                                 android:id="@+id/tvDirector"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Đang cập nhật"
+                                android:text=""
                                 android:textColor="#979292" />
                         </LinearLayout>
 
@@ -310,7 +310,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:text="2024-05-16 22:47:49"
+                                android:text=""
                                 android:textColor="#979292" />
                         </LinearLayout>
                     </LinearLayout>
