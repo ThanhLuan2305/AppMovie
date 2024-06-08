@@ -77,4 +77,7 @@ public class EpisodeRecyclerAdapter extends RecyclerView.Adapter<EpisodeRecycler
             episodesBtn = itemView.findViewById(R.id.episodeBtn);
         }
     }
+    public int getSelectedPosition(){
+        return selectedPosition;
+    }
 }

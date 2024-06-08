@@ -6,6 +6,7 @@ import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.ui.PlayerView;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +19,9 @@ public class MoviePlayer extends AppCompatActivity {
     ExoPlayer exoPlayer;
     String sampleVideo = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4";
     Button backButton;
+    String epName;
+    private static final String PREFERENCES_NAME = "com.example.appmovie";
+    private static final String KEY_POSITION_PREFIX = "position_";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +42,9 @@ public class MoviePlayer extends AppCompatActivity {
 
         Intent intent = getIntent();
         sampleVideo = intent.getStringExtra("url");
+        epName = intent.getStringExtra("epName");
+
+        long savedPosition = getSavedPosition(epName);
 
         playerView = findViewById(R.id.PlayerViewMovie);
         exoPlayer = new ExoPlayer.Builder(this).build();
@@ -60,6 +67,12 @@ public class MoviePlayer extends AppCompatActivity {
         MediaItem mediaItem = MediaItem.fromUri(sampleVideo);
         //MediaItem mediaItem = MediaItem.fromUri("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
         exoPlayer.setMediaItem(mediaItem);
+
+        // Set the position if it was saved
+        if (savedPosition != 0) {
+            exoPlayer.seekTo(savedPosition);
+        }
+
         exoPlayer.prepare();
         // Set touch listener on the PlayerView to detect taps
 
@@ -80,12 +93,26 @@ public class MoviePlayer extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
+        saveCurrentPosition();
         exoPlayer.pause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        saveCurrentPosition();
         exoPlayer.release();
+    }
+    private void saveCurrentPosition() {
+        long currentPosition = exoPlayer.getCurrentPosition();
+        SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putLong(KEY_POSITION_PREFIX + epName, currentPosition);
+        editor.apply();
+    }
+
+    private long getSavedPosition(String epName) {
+        SharedPreferences preferences = getSharedPreferences(PREFERENCES_NAME, MODE_PRIVATE);
+        return preferences.getLong(KEY_POSITION_PREFIX + epName, 0);
     }
 }

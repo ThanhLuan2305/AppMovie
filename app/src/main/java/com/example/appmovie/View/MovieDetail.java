@@ -27,6 +27,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.appmovie.Dto.UserManager;
 import com.example.appmovie.Model.FavourFilm;
 import com.example.appmovie.Model.Movie;
 import com.example.appmovie.Model.User;
@@ -36,6 +37,7 @@ import com.example.appmovie.R;
 import com.example.appmovie.View.Adapter.ActorRecyclerAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -59,6 +61,8 @@ import java.util.TimeZone;
 public class MovieDetail extends AppCompatActivity {
     ArrayList<String> lstActor = new ArrayList<>();
     episodes epis = new episodes();
+    User currentUser;
+    String userId = "";
 
     Movie movie = new Movie();
     RecyclerView rvActor;
@@ -75,6 +79,8 @@ public class MovieDetail extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        currentUser = UserManager.getInstance().getCurrentUser();
+        userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         try
         {
             this.getSupportActionBar().hide();
@@ -147,6 +153,7 @@ public class MovieDetail extends AppCompatActivity {
                     Intent intent = new Intent(MovieDetail.this, WatchMovie.class);
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("Episodes", epis);
+                    bundle.putString("MovieSlug",slug);
                     intent.putExtra("EpisodesPakage", bundle);
                     startActivity(intent);
                 }
@@ -205,9 +212,9 @@ public class MovieDetail extends AppCompatActivity {
     }
     void addFavourFilm() {
         User user = new User(
-                "caohieeu",
-                "image",
-                "caohieeu2@gmail.com",
+                currentUser.Name,
+                currentUser.Image,
+                currentUser.Email,
                 new ArrayList<FavourFilm>()
         );
         user.Favour_film.add(new FavourFilm(
@@ -216,7 +223,7 @@ public class MovieDetail extends AppCompatActivity {
                 movie.origin_name,
                 movie.poster_url
         ));
-        node_ref.document("user_id_1")
+        node_ref.document(userId)
                 .set(user)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -233,9 +240,9 @@ public class MovieDetail extends AppCompatActivity {
     }
     void deleteFavourFilm() {
         User user = new User(
-                "caohieeu",
-                "image",
-                "caohieeu2@gmail.com",
+                currentUser.Name,
+                currentUser.Image,
+                currentUser.Email,
                 new ArrayList<FavourFilm>()
         );
         FavourFilm film = new FavourFilm(
@@ -245,7 +252,7 @@ public class MovieDetail extends AppCompatActivity {
                 movie.poster_url
         );
         user.Favour_film.remove(film);
-        node_ref.document("user_id_1")
+        node_ref.document(userId)
                 .set(user)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
