@@ -1,29 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
     <item
-        android:id="@+id/movie"
-        android:icon="@drawable/baseline_movie_24"
-        android:title="Phim lẻ" />
-
-    <item
-        android:id="@+id/series"
-        android:icon="@drawable/baseline_local_movies_24"
-        android:title="Phim bộ" />
-
-    <item
-        android:id="@+id/home"
+        android:id="@+id/nav_home"
         android:icon="@drawable/baseline_home_24"
         android:title="Trang chủ" />
 
     <item
-        android:id="@+id/cartoon"
-        android:icon="@drawable/baseline_child_care_24"
-        android:title="Hoạt hình" />
-
-    <item
         android:id="@+id/menu_item_profile"
         android:icon="@drawable/baseline_attribution_24"
-        android:title="Profile" />
-
+        android:title="Thông tin" />
 </menu>
