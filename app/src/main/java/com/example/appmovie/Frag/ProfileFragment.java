@@ -1,20 +1,28 @@
 package com.example.appmovie.Frag;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.appmovie.Dto.UserManager;
 import com.example.appmovie.Model.FavourFilm;
 import com.example.appmovie.Model.User;
@@ -22,9 +30,15 @@ import com.example.appmovie.R;
 import com.example.appmovie.View.Adapter.MovieAdapter;
 import com.example.appmovie.View.MovieDetail;
 import com.example.appmovie.View.SignIn;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -32,9 +46,9 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment {
-
     private TextView txtUserName, txtUserEmail;
     ListView listView;
+    User user = UserManager.getInstance().getCurrentUser();
     private ImageView imgUser;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -79,7 +93,8 @@ public class ProfileFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
-        ImageButton editProfileButton = view.findViewById(R.id.logout_button);
+        ImageButton logoutButton = view.findViewById(R.id.logout_button);
+        Button editProfileButton = view.findViewById(R.id.edit_profile_button);
 
         txtUserName = view.findViewById(R.id.user_name);
         txtUserEmail = view.findViewById(R.id.user_email);
@@ -87,7 +102,6 @@ public class ProfileFragment extends Fragment {
 
         initView(view);
 
-        User user = UserManager.getInstance().getCurrentUser();
         if (user != null) {
 
             txtUserName.setText(user.Name);
@@ -99,13 +113,21 @@ public class ProfileFragment extends Fragment {
             favourMovie(user.Favour_film);
         }
 
-        editProfileButton.setOnClickListener(new View.OnClickListener() {
+        logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FirebaseAuth auth = FirebaseAuth.getInstance();
                 auth.signOut();
                 Intent intent = new Intent(getActivity(), SignIn.class);
                 startActivity(intent);
+            }
+        });
+
+        editProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Hiển thị popup chỉnh sửa thông tin người dùng
+                showEditProfilePopup(user);
             }
         });
         return view;
@@ -139,4 +161,97 @@ public class ProfileFragment extends Fragment {
         it.putExtra("myPackage",bd);
         startActivity(it);
     }
+
+    private void showEditProfilePopup(User user) {
+        Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.edit_profile_popup);
+
+        EditText editTextUsername = dialog.findViewById(R.id.editTextUsername);
+        EditText editTextEmail = dialog.findViewById(R.id.editTextEmail);
+        Button saveButton = dialog.findViewById(R.id.save_button);
+        Button cancelButton = dialog.findViewById(R.id.cancel_button);
+        ImageView imageView = dialog.findViewById(R.id.imageView);
+
+        editTextUsername.setText(user.Name);
+        editTextEmail.setText(user.Email);
+
+        Glide.with(this)
+                .load(user.Image)
+                .apply(new RequestOptions().placeholder(R.drawable.circle_avatar))
+                .into(imageView);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Khởi tạo Intent cho việc chọn ảnh từ thư viện
+                Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Chọn ảnh"), 1);
+            }
+        });
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String newUsername = editTextUsername.getText().toString();
+                String newEmail = editTextEmail.getText().toString();
+
+                // Kiểm tra xem dữ liệu mới có hợp lệ không
+                if (Patterns.EMAIL_ADDRESS.matcher(newEmail).matches()) {
+                    // Tạo map chứa thông tin người dùng mới
+                    Map<String, Object> updatedUserData = new HashMap<>();
+                    updatedUserData.put("Name", newUsername);
+                    updatedUserData.put("Email", newEmail);
+
+                    // Cập nhật dữ liệu trên Firebase
+                    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                    if (currentUser != null) {
+                        String userId = currentUser.getUid();
+                        FirebaseFirestore.getInstance().collection("Users").document(userId)
+                                .update(updatedUserData)
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        user.Name = newUsername;
+                                        user.Email = newEmail;
+                                        UserManager.getInstance().setCurrentUser(user);
+                                        dialog.dismiss();
+                                        Toast.makeText(ProfileFragment.this.getActivity(), "Thông tin đã được cập nhật", Toast.LENGTH_SHORT).show();
+
+                                        FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                                        ft.replace(R.id.container, new ProfileFragment()).commit();
+                                        ProfileFragment profileFragment = (ProfileFragment) getParentFragmentManager().findFragmentByTag("ProfileFragment");
+                                        if (profileFragment != null) {
+                                            profileFragment.onResume();
+                                        }
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        // Hiển thị thông báo cập nhật thất bại
+                                        Toast.makeText(ProfileFragment.this.getActivity(), "Cập nhật thông tin thất bại", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                    }
+                } else {
+                    // Hiển thị thông báo lỗi nếu email không hợp lệ
+                    Toast.makeText(ProfileFragment.this.getActivity(), "Email không hợp lệ", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // Xử lý sự kiện click cho nút Hủy
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Đóng dialog
+                dialog.dismiss();
+            }
+        });
+
+        // Hiển thị dialog
+        dialog.show();
+    }
+
 }

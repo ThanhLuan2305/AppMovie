@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
+    android:id="@+id/container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -63,17 +64,17 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Bio -->
-    <TextView
-        android:id="@+id/user_bio"
-        android:layout_width="0dp"
+    <Button
+        android:id="@+id/edit_profile_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp"
+        android:text="Chỉnh sửa thông tin"
         android:textColor="#86E91E63"
-        android:text="Thành viên"
-        app:layout_constraintTop_toBottomOf="@id/user_email"
         app:layout_constraintStart_toEndOf="@id/profile_image"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/user_email"
+        />
 
     <!-- New Layout -->
     <LinearLayout
@@ -81,7 +82,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@id/user_bio"
+        app:layout_constraintTop_toBottomOf="@id/edit_profile_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
