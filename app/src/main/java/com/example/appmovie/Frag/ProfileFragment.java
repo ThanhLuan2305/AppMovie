@@ -86,6 +86,7 @@ public class ProfileFragment extends Fragment {
 
         User user = UserManager.getInstance().getCurrentUser();
         if (user != null) {
+
             txtUserName.setText(user.Name);
             txtUserEmail.setText(user.Email);
             Glide.with(this).load(user.Image).into(imgUser);
