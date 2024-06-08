@@ -13,15 +13,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.appmovie.Model.Home.Category;
@@ -30,7 +27,6 @@ import com.example.appmovie.Model.Home.ItemClickListener;
 import com.example.appmovie.Model.Home.ListFilm;
 import com.example.appmovie.Model.SliderItems;
 import com.example.appmovie.R;
-import com.example.appmovie.View.Adapter.CtgFilmRecyclerAdapter;
 import com.example.appmovie.View.Adapter.FilmListAdapter;
 import com.example.appmovie.View.Adapter.SliderAdapters;
 import com.google.gson.Gson;
@@ -75,7 +71,7 @@ public class MovieHome extends AppCompatActivity {
         lstCtg.add(category3);
         lstCtg.add(category4);
         loading2.setVisibility(View.GONE);
-        adapterCategory= new CtgFilmRecyclerAdapter(lstCtg);
+        //adapterCategory= new CtgFilmRecyclerAdapter(lstCtg);
         recyclerViewCategory.setAdapter(adapterCategory);
     }
     private void banners() {
@@ -169,13 +165,13 @@ public class MovieHome extends AppCompatActivity {
         viewPager2=findViewById(R.id.viewpagerSlider);
         recyclerViewNewMovies = findViewById(R.id.view1);
         recyclerViewNewMovies.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false));
-        recyclerViewUpcomming = findViewById(R.id.view3);
+        recyclerViewUpcomming = findViewById(R.id.viewCtg);
         recyclerViewUpcomming.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false));
         recyclerViewCategory = findViewById(R.id.view2);
         recyclerViewCategory.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false));
         loading1 = findViewById(R.id.progressBar1);
         loading2 = findViewById(R.id.progressBar2);
-        loading3 = findViewById(R.id.progressBar3);
+        loading3 = findViewById(R.id.progressBarCtg);
         txtSeach = findViewById(R.id.txtSeach);
     }
 
