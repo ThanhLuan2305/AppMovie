@@ -40,7 +40,6 @@ public class WatchMovie extends AppCompatActivity {
         url.url = epis.server_data.get(0).link_m3u8;
         initView();
         addEvent();
-
     }
     void initView(){
         currentEp = findViewById(R.id.currentEp);

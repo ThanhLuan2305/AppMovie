@@ -96,7 +96,6 @@ public class SignIn extends AppCompatActivity {
                             User user = task.getResult().toObject(User.class);
                             UserManager.getInstance().setCurrentUser(user);
                         } else {
-                            // Handle errors here
                         }
                     }
                 });
