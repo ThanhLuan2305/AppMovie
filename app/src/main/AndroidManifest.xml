@@ -17,7 +17,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
-            android:name=".View.Adapter.CategoryActivity"
+            android:name=".View.CategoryActivity"
             android:exported="false" />
         <activity
             android:name=".View.ForgotPass"
