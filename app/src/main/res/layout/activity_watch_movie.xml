@@ -30,7 +30,7 @@
         app:layout_constraintEnd_toEndOf="@+id/thumbnail"
         app:layout_constraintStart_toStartOf="@+id/thumbnail"
         app:layout_constraintTop_toTopOf="@+id/thumbnail"
-        tools:srcCompat="@android:drawable/ic_media_play" />
+        app:srcCompat="@drawable/baseline_play_arrow_24" />
 
     <TextView
         android:id="@+id/currentEp"
