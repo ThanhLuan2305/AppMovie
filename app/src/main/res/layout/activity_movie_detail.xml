@@ -191,6 +191,14 @@
                     android:layout_marginTop="10dp"
                     android:orientation="horizontal">
 
+                    <Button
+                        android:id="@+id/btnRate"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_marginRight="10dp"
+                        android:backgroundTint="@color/white"
+                        android:background="@drawable/ic_star"
+                        android:clickable="true"/>
 
                     <ToggleButton
                         android:id="@+id/btnFavorite"
