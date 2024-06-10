@@ -54,6 +54,8 @@ import org.json.JSONException;
 import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,6 +94,7 @@ public class CommentDialogFragment extends DialogFragment {
                             docRef.set(data);
 
                         } else {
+                            Collections.reverse(comments);
                             // Comments array is not null, complete future with comments
                             adapter = new CommentListAdapter(requireContext(), R.layout.comment_recycler_view, comments);
                             listView.setAdapter(adapter);

@@ -1,4 +1,4 @@
-package com.example.appmovie.View;
+package com.example.appmovie.Frag;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
