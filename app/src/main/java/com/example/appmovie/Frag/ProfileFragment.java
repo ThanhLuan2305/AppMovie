@@ -1,13 +1,18 @@
 package com.example.appmovie.Frag;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -35,10 +40,17 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -46,14 +58,22 @@ import java.util.Map;
  * create an instance of this fragment.
  */
 public class ProfileFragment extends Fragment {
+
+    private static final int REQUEST_CODE_READ_EXTERNAL_STORAGE = 1001;
+    private static final int REQUEST_CODE_IMAGE_PICK = 1002;
     private TextView txtUserName, txtUserEmail;
     ListView listView;
     User user = UserManager.getInstance().getCurrentUser();
     private ImageView imgUser;
+    private ImageView dialogImageView;
+
+    private Uri selectedImageUri;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -87,6 +107,10 @@ public class ProfileFragment extends Fragment {
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+
+        if (ContextCompat.checkSelfPermission(getContext(), READ_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{READ_EXTERNAL_STORAGE}, REQUEST_CODE_READ_EXTERNAL_STORAGE);
         }
     }
     @Override
@@ -170,7 +194,7 @@ public class ProfileFragment extends Fragment {
         EditText editTextEmail = dialog.findViewById(R.id.editTextEmail);
         Button saveButton = dialog.findViewById(R.id.save_button);
         Button cancelButton = dialog.findViewById(R.id.cancel_button);
-        ImageView imageView = dialog.findViewById(R.id.imageView);
+        dialogImageView = dialog.findViewById(R.id.imageView);
 
         editTextUsername.setText(user.Name);
         editTextEmail.setText(user.Email);
@@ -178,80 +202,117 @@ public class ProfileFragment extends Fragment {
         Glide.with(this)
                 .load(user.Image)
                 .apply(new RequestOptions().placeholder(R.drawable.circle_avatar))
-                .into(imageView);
+                .into(dialogImageView);
 
-        imageView.setOnClickListener(new View.OnClickListener() {
+        dialogImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Khởi tạo Intent cho việc chọn ảnh từ thư viện
-                Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Chọn ảnh"), 1);
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(intent, REQUEST_CODE_IMAGE_PICK);
             }
         });
+
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String newUsername = editTextUsername.getText().toString();
                 String newEmail = editTextEmail.getText().toString();
 
-                // Kiểm tra xem dữ liệu mới có hợp lệ không
                 if (Patterns.EMAIL_ADDRESS.matcher(newEmail).matches()) {
-                    // Tạo map chứa thông tin người dùng mới
                     Map<String, Object> updatedUserData = new HashMap<>();
                     updatedUserData.put("Name", newUsername);
                     updatedUserData.put("Email", newEmail);
 
-                    // Cập nhật dữ liệu trên Firebase
-                    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                    if (currentUser != null) {
-                        String userId = currentUser.getUid();
-                        FirebaseFirestore.getInstance().collection("Users").document(userId)
-                                .update(updatedUserData)
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-                                        user.Name = newUsername;
-                                        user.Email = newEmail;
-                                        UserManager.getInstance().setCurrentUser(user);
-                                        dialog.dismiss();
-                                        Toast.makeText(ProfileFragment.this.getActivity(), "Thông tin đã được cập nhật", Toast.LENGTH_SHORT).show();
-
-                                        FragmentTransaction ft = getParentFragmentManager().beginTransaction();
-                                        ft.replace(R.id.container, new ProfileFragment()).commit();
-                                        ProfileFragment profileFragment = (ProfileFragment) getParentFragmentManager().findFragmentByTag("ProfileFragment");
-                                        if (profileFragment != null) {
-                                            profileFragment.onResume();
-                                        }
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        // Hiển thị thông báo cập nhật thất bại
-                                        Toast.makeText(ProfileFragment.this.getActivity(), "Cập nhật thông tin thất bại", Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                    if (selectedImageUri != null) {
+                        uploadImageToFirebase(selectedImageUri, user, updatedUserData);
+                    } else {
+                        updateUserData(user, updatedUserData);
                     }
                 } else {
-                    // Hiển thị thông báo lỗi nếu email không hợp lệ
                     Toast.makeText(ProfileFragment.this.getActivity(), "Email không hợp lệ", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
-        // Xử lý sự kiện click cho nút Hủy
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Đóng dialog
                 dialog.dismiss();
             }
         });
 
-        // Hiển thị dialog
         dialog.show();
     }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_IMAGE_PICK && resultCode == Activity.RESULT_OK && data != null) {
+            selectedImageUri = data.getData();
+            if (selectedImageUri != null) {
+                // Update the ImageView with the selected image
+                Glide.with(this).load(selectedImageUri).into(dialogImageView);
+            }
+        }
+    }
+
+    private void uploadImageToFirebase(Uri imageUri, User user, Map<String, Object> updatedUserData) {
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        StorageReference storageReference = storage.getReference().child("profile_images/" + FirebaseAuth.getInstance().getCurrentUser().getUid() + ".jpg");
+
+        storageReference.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                storageReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        String newImageUrl = uri.toString();
+                        updatedUserData.put("Image", newImageUrl);
+                        updateUserData(user, updatedUserData);
+                    }
+                });
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(), "Image upload failed", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void updateUserData(User user, Map<String, Object> updatedUserData) {
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            String userId = currentUser.getUid();
+            FirebaseFirestore.getInstance().collection("Users").document(userId)
+                    .update(updatedUserData)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            user.Name = (String) updatedUserData.get("Name");
+                            user.Email = (String) updatedUserData.get("Email");
+                            if (updatedUserData.containsKey("Image")) {
+                                user.Image = (String) updatedUserData.get("Image");
+                            }
+                            UserManager.getInstance().setCurrentUser(user);
+//                            dialog.dismiss();
+                            Toast.makeText(ProfileFragment.this.getActivity(), "Thông tin đã được cập nhật", Toast.LENGTH_SHORT).show();
+
+                            FragmentTransaction ft = getParentFragmentManager().beginTransaction();
+                            ft.replace(R.id.container, new ProfileFragment()).commit();
+                            ProfileFragment profileFragment = (ProfileFragment) getParentFragmentManager().findFragmentByTag("ProfileFragment");
+                            if (profileFragment != null) {
+                                profileFragment.onResume();
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(ProfileFragment.this.getActivity(), "Cập nhật thông tin thất bại", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
+    }
+
 
 }
