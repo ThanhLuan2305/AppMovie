@@ -2,6 +2,7 @@ package com.example.appmovie.Model;
 
 import androidx.annotation.Nullable;
 
+import java.util.Date;
 import java.util.Objects;
 
 public class FavourFilm {
@@ -9,15 +10,27 @@ public class FavourFilm {
     public String slug;
     public String origin_name;
     public String poster_url;
+    public  String name;
+    public Date create_at;
 
     public FavourFilm() {
     }
 
-    public FavourFilm(String movie_id, String slug, String origin_name, String poster_url) {
+    public FavourFilm(String movie_id, String slug, String origin_name, String poster_url, String name, Date create_at) {
         this.movie_id = movie_id;
         this.slug = slug;
         this.origin_name = origin_name;
         this.poster_url = poster_url;
+        this.name = name;
+        this.create_at = create_at;
+    }
+
+    public FavourFilm(String movie_id, String slug, String origin_name, String poster_url, String name) {
+        this.movie_id = movie_id;
+        this.slug = slug;
+        this.origin_name = origin_name;
+        this.poster_url = poster_url;
+        this.name = name;
     }
 
     @Override

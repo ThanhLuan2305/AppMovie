@@ -82,6 +82,7 @@ public class MovieDetail extends AppCompatActivity {
     CollectionReference node_ref = firestore.collection("Users");
     CollectionReference node_rating_ref = firestore.collection("Rating");
     RatingDto listRating = new RatingDto();
+    Date currentDate = new Date();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -277,7 +278,10 @@ public class MovieDetail extends AppCompatActivity {
                 movie.id,
                 movie.slug,
                 movie.origin_name,
-                movie.poster_url
+                movie.poster_url,
+                movie.name,
+                currentDate
+
         ));
         Set<FavourFilm> listFavour = new LinkedHashSet<>(currentUser.Favour_film);
         currentUser.Favour_film.clear();
@@ -302,7 +306,8 @@ public class MovieDetail extends AppCompatActivity {
                 movie.id,
                 movie.slug,
                 movie.origin_name,
-                movie.poster_url
+                movie.poster_url,
+                movie.name
         );
         currentUser.Favour_film.remove(film);
         node_ref.document(userId)

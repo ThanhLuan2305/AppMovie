@@ -16,7 +16,9 @@ import com.example.appmovie.Model.FavourFilm;
 import com.example.appmovie.R;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class MovieAdapter extends ArrayAdapter<FavourFilm> {
 
@@ -35,7 +37,6 @@ public class MovieAdapter extends ArrayAdapter<FavourFilm> {
         void onItemClick(FavourFilm film);
     }
 
-    // Phương thức để thiết lập trình nghe sự kiện
     public void setOnItemClickListener(OnItemClickListener listener) {
         mListener = listener;
     }
@@ -51,13 +52,22 @@ public class MovieAdapter extends ArrayAdapter<FavourFilm> {
 
         ImageView imgMovieItem = view.findViewById(R.id.imgMovieItem);
         TextView titleText = view.findViewById(R.id.titleText);
+        TextView titleText2 = view.findViewById(R.id.titleText2);
+        TextView createAt = view.findViewById(R.id.create_at);
 
         FavourFilm film = getItem(position);
         if (film != null) {
             Glide.with(mContext).load(film.poster_url).into(imgMovieItem);
-            titleText.setText(film.origin_name);
+            titleText.setText(film.name);
+            titleText2.setText(film.origin_name);
+            if (film.create_at != null) {
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+                String dateString = dateFormat.format(film.create_at);
+                createAt.setText("Thời gian thêm: " +dateString);
+            } else {
+                createAt.setText("không xác định");
+            }
 
-            // Xử lý sự kiện click
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

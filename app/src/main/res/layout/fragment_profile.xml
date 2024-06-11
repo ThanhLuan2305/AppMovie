@@ -9,17 +9,21 @@
     tools:context=".Frag.ProfileFragment">
 
     <!-- Profile Picture -->
-    <ImageView
-        android:id="@+id/profile_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_margin="16dp"
-        android:src="@drawable/circle_avatar"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        android:contentDescription="profile_picture" />
 
     <!-- User Name -->
+
+    <ImageView
+        android:id="@+id/profile_image"
+        android:layout_width="102dp"
+        android:layout_height="117dp"
+        android:layout_margin="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="profile_picture"
+        android:src="@drawable/circle_avatar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/user_name"
         android:layout_width="0dp"
@@ -66,15 +70,15 @@
     <!-- Bio -->
     <Button
         android:id="@+id/edit_profile_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_width="135dp"
+        android:layout_height="42dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="10dp"
         android:text="Chỉnh sửa thông tin"
         android:textColor="#86E91E63"
+        android:textSize="10dp"
         app:layout_constraintStart_toEndOf="@id/profile_image"
-        app:layout_constraintTop_toBottomOf="@id/user_email"
-        />
+        app:layout_constraintTop_toBottomOf="@id/user_email" />
 
     <!-- New Layout -->
     <LinearLayout
@@ -104,7 +108,7 @@
         <ListView
             android:id="@+id/listViewMovies"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="544dp"
             android:divider="@android:color/transparent"
             android:dividerHeight="0dp" />
 

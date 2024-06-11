@@ -150,7 +150,6 @@ public class ProfileFragment extends Fragment {
         editProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Hiển thị popup chỉnh sửa thông tin người dùng
                 showEditProfilePopup(user);
             }
         });
@@ -158,12 +157,7 @@ public class ProfileFragment extends Fragment {
     }
 
     private void favourMovie(ArrayList<FavourFilm> films) {
-        ArrayList<String> movieNames = new ArrayList<>();
-        for (FavourFilm film : films) {
-            movieNames.add(film.origin_name);
-        }
-
-        MovieAdapter adapter = new MovieAdapter(getContext(), R.layout.layout_item_movie, films);
+        MovieAdapter adapter = new MovieAdapter(getContext(), R.layout.layout_item_fav, films);
         listView.setAdapter(adapter);
         adapter.setOnItemClickListener(new MovieAdapter.OnItemClickListener() {
             @Override
@@ -189,7 +183,6 @@ public class ProfileFragment extends Fragment {
     private void showEditProfilePopup(User user) {
         Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.edit_profile_popup);
-
         EditText editTextUsername = dialog.findViewById(R.id.editTextUsername);
         EditText editTextEmail = dialog.findViewById(R.id.editTextEmail);
         Button saveButton = dialog.findViewById(R.id.save_button);

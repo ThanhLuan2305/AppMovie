@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:minWidth="300dp"
-    android:padding="16dp">
+    android:minWidth="350dp"
+    android:padding="14dp">
 
     <TextView
         android:id="@+id/title123"
@@ -41,13 +41,11 @@
         android:inputType="textEmailAddress"
         android:layout_marginBottom="8dp"/>
 
-    <!-- Buttons -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <!-- Save Button -->
         <Button
             android:id="@+id/save_button"
             android:layout_width="0dp"
@@ -55,13 +53,12 @@
             android:layout_weight="1"
             android:text="Lưu"/>
 
-        <!-- Cancel Button -->
         <Button
             android:id="@+id/cancel_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Hủy"/>
+            android:text="Thoát"/>
 
     </LinearLayout>
 

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layoutItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:layout_margin="6dp">
+
+    <ImageView
+        android:id="@+id/imgMovieItem"
+        android:layout_width="101dp"
+        android:layout_height="127dp"
+        android:maxWidth="101dp"
+        android:maxHeight="127dp"
+        android:src="@drawable/wide1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="249dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="2dp"
+            android:lines="2"
+            android:maxLines="2"
+            android:text="TextView"
+            android:textColor="#B903A9F4"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/titleText2"
+            android:layout_width="249dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="2dp"
+            android:lines="2"
+            android:maxLines="2"
+            android:text="TextView"
+            android:textColor="#E91E63"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/create_at"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:textColor="#000000"
+            android:text="TextView" />
+    </LinearLayout>
+
+</LinearLayout>
