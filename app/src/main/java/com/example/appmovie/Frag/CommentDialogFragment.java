@@ -158,8 +158,12 @@ public class CommentDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 User user = UserManager.getInstance().getCurrentUser();
+                String imageUrl = "https://yt3.googleusercontent.com/QuxsN5qlZ45kmXeWlScDOG-xr7KBoDbu01DhMLZd7R69JHh_5QicghzOpToNMnMcxVS5PUkoUHs=s900-c-k-c0x00ffffff-no-rj";
+                if(user.Image != null) {
+                    imageUrl = user.Image;
+                }
                 Comment comment = new Comment(cmtContent.getText().toString(),LocalDate.now().toString(),
-                        "" , user.Name, "https://yt3.googleusercontent.com/QuxsN5qlZ45kmXeWlScDOG-xr7KBoDbu01DhMLZd7R69JHh_5QicghzOpToNMnMcxVS5PUkoUHs=s900-c-k-c0x00ffffff-no-rj", Movie_id);
+                        "" , user.Name,imageUrl , Movie_id);
                 comment.Id = "";
                 addComment(comment);
 

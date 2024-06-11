@@ -83,8 +83,12 @@ public class RatingDialogFragment extends DialogFragment {
             @Override
             public void onClick(View v) {
                 User user = UserManager.getInstance().getCurrentUser();
+                String imageUrl = "https://yt3.googleusercontent.com/QuxsN5qlZ45kmXeWlScDOG-xr7KBoDbu01DhMLZd7R69JHh_5QicghzOpToNMnMcxVS5PUkoUHs=s900-c-k-c0x00ffffff-no-rj";
+                if(user.Image != null) {
+                    imageUrl = user.Image;
+                }
                 int rateValue = (int)ratingBar.getRating();
-                Rating newRate = new Rating(user.Name,"https://yt3.googleusercontent.com/QuxsN5qlZ45kmXeWlScDOG-xr7KBoDbu01DhMLZd7R69JHh_5QicghzOpToNMnMcxVS5PUkoUHs=s900-c-k-c0x00ffffff-no-rj", rateValue);
+                Rating newRate = new Rating(user.Name,imageUrl, rateValue);
                 addRate(movie_id,newRate);
             }
         });
