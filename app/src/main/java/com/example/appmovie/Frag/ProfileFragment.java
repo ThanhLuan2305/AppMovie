@@ -157,15 +157,24 @@ public class ProfileFragment extends Fragment {
     }
 
     private void favourMovie(ArrayList<FavourFilm> films) {
-        MovieAdapter adapter = new MovieAdapter(getContext(), R.layout.layout_item_fav, films);
-        listView.setAdapter(adapter);
+        if (getContext() == null) {
+            Log.e("ProfileFragment", "Context is null, cannot set adapter.");
+            return;
+        }
+        ArrayList<FavourFilm> newFilms = new ArrayList<>(films);
+        MovieAdapter adapter = new MovieAdapter(getContext(), R.layout.layout_item_fav, newFilms);
+
         adapter.setOnItemClickListener(new MovieAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(FavourFilm film) {
                 onClickGoToDetail(film);
             }
         });
+
+        listView.setAdapter(adapter);
     }
+
+
 
     private void initView(View view) {
         listView = view.findViewById(R.id.listViewMovies);

@@ -32,7 +32,6 @@ public class MovieAdapter extends ArrayAdapter<FavourFilm> {
         mResource = resource;
     }
 
-    // Interface để xử lý sự kiện click
     public interface OnItemClickListener {
         void onItemClick(FavourFilm film);
     }
@@ -45,40 +44,54 @@ public class MovieAdapter extends ArrayAdapter<FavourFilm> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         View view = convertView;
+        ViewHolder viewHolder;
+
         if (view == null) {
             LayoutInflater inflater = LayoutInflater.from(mContext);
             view = inflater.inflate(mResource, parent, false);
-        }
 
-        ImageView imgMovieItem = view.findViewById(R.id.imgMovieItem);
-        TextView titleText = view.findViewById(R.id.titleText);
-        TextView titleText2 = view.findViewById(R.id.titleText2);
-        TextView createAt = view.findViewById(R.id.create_at);
+            viewHolder = new ViewHolder();
+            viewHolder.imgMovieItem = view.findViewById(R.id.imgMovieItem);
+            viewHolder.titleText = view.findViewById(R.id.titleText);
+            viewHolder.titleText2 = view.findViewById(R.id.titleText2);
+            viewHolder.createAt = view.findViewById(R.id.create_at);
+
+            view.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) view.getTag();
+        }
 
         FavourFilm film = getItem(position);
         if (film != null) {
-            Glide.with(mContext).load(film.poster_url).into(imgMovieItem);
-            titleText.setText(film.name);
-            titleText2.setText(film.origin_name);
+            Glide.with(mContext).load(film.poster_url).into(viewHolder.imgMovieItem);
+            viewHolder.titleText.setText(film.name);
+            viewHolder.titleText2.setText(film.origin_name);
             if (film.create_at != null) {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 String dateString = dateFormat.format(film.create_at);
-                createAt.setText("Thời gian thêm: " +dateString);
+                viewHolder.createAt.setText("Thời gian thêm: " + dateString);
             } else {
-                createAt.setText("không xác định");
+                viewHolder.createAt.setText("không xác định");
             }
-
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mListener != null) {
-                        mListener.onItemClick(film);
-                    }
-                }
-            });
         }
 
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mListener != null && film != null) {
+                    mListener.onItemClick(film);
+                }
+            }
+        });
+
         return view;
+    }
+
+    static class ViewHolder {
+        ImageView imgMovieItem;
+        TextView titleText;
+        TextView titleText2;
+        TextView createAt;
     }
 }
 
